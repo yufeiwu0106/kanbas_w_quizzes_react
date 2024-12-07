@@ -12,40 +12,13 @@ import { useDispatch } from "react-redux";
 import QuizController from "./QuizController";
 import ContextMenu from "./ContextMenu";
 import { setQuizzes } from "./reducer";
-
+import quizzesData from "./quizzes"
 function Quizzes() {
   const dispatch = useDispatch();
 
   const { cid } = useParams();
 
-  const quizzes = [
-    {
-      _id: 1,
-      title: "Q1 - HTML",
-      type: "Graded Quiz",
-      point: 100,
-      status: "Published",
-      assignmentGroup: "Quizzes",
-      shuffleAnswer: "Yes",
-      timeLimit: "20",
-      multipleAttempts: "No",
-      howManyAttempts: "1",
-      showCorrectAnswers: "Immediately",
-      oneQuestionAtATime: "Yes",
-      webcamRequired: "No",
-      lockQuestionsAfterAnswering: "No",
-      dueDate: "2024-03-25",
-      availableDate: "2024-03-25",
-    },
-    {
-      _id: 2,
-      title: "Q2 - CSS",
-      dueDate: "2024-04-01",
-      point: 100,
-      status: "Published",
-    },
-    // Add more quiz items as needed
-  ];
+  const quizzes = quizzesData;
 
   console.log(quizzes);
 
