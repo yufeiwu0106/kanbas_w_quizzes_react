@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { FaEllipsisV, FaCheckCircle, FaPlus } from "react-icons/fa";
 import "./index.css";
@@ -10,6 +10,8 @@ import { BiDotsVerticalRounded } from "react-icons/bi";
 import { GiNotebook } from "react-icons/gi";
 import { useDispatch } from "react-redux";
 import QuizController from "./QuizController";
+import ContextMenu from "./ContextMenu";
+import { setQuizzes } from "./reducer";
 
 function Quizzes() {
   const dispatch = useDispatch();
@@ -18,14 +20,25 @@ function Quizzes() {
 
   const quizzes = [
     {
-      id: 1,
+      _id: 1,
       title: "Q1 - HTML",
-      dueDate: "2024-03-25",
+      type: "Graded Quiz",
       point: 100,
       status: "Published",
+      assignmentGroup: "Quizzes",
+      shuffleAnswer: "Yes",
+      timeLimit: "20",
+      multipleAttempts: "No",
+      howManyAttempts: "1",
+      showCorrectAnswers: "Immediately",
+      oneQuestionAtATime: "Yes",
+      webcamRequired: "No",
+      lockQuestionsAfterAnswering: "No",
+      dueDate: "2024-03-25",
+      availableDate: "2024-03-25",
     },
     {
-      id: 2,
+      _id: 2,
       title: "Q2 - CSS",
       dueDate: "2024-04-01",
       point: 100,
@@ -33,6 +46,37 @@ function Quizzes() {
     },
     // Add more quiz items as needed
   ];
+
+  console.log(quizzes);
+
+  const fetchQuizzes = async () => {
+    // TODO: fetch quizzes from backend
+    const quizzes = [
+        {
+          _id: 1,
+          title: "Q1 - HTML",
+          dueDate: "2024-03-25",
+          point: 100,
+          status: "Published",
+        },
+        {
+          _id: 2,
+          title: "Q2 - CSS",
+          dueDate: "2024-04-01",
+          point: 100,
+          status: "Published",
+        },
+        // Add more quiz items as needed
+      ];    
+
+    dispatch(setQuizzes(quizzes));
+  };
+
+  useEffect(() => {
+    fetchQuizzes();
+  }, []);
+
+
 
   return (
     <div>
@@ -102,7 +146,7 @@ function Quizzes() {
                           </span>
                         </div>
                       </div>
-                      {/* <GreenCheckPlus quizId={quiz._id} /> */}
+                      <ContextMenu quizId={quiz._id} />
                     </div>
                   </li>
                 )

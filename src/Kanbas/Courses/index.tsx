@@ -4,6 +4,8 @@ import Home from "./Home";
 import Assignments from "./Assignments";
 import AssignmentEditor from "./Assignments/AssignmentEditor";
 import Quizzes from "./Quizzes";
+import QuizEditor from "./Quizzes/QuizEditor";
+import QuizPreview from "./Quizzes/QuizPreview";
 import { FaAlignJustify } from "react-icons/fa";
 import PeopleTable from "./People/Table";
 import ProtectedCourseRoute from "./ProtectedCourseRoute";
@@ -60,6 +62,8 @@ export default function Courses({ courses }: { courses: any[] }) {
             <Route path="Assignments" element={<Assignments />} />
             <Route path="Assignments/:aid" element={<AssignmentEditor />} />
             <Route path="Quizzes" element={<Quizzes />} />
+            <Route path="Quizzes/:qid" element={<QuizEditor />} />
+            <Route path="Quizzes/:qid/Questions" element={<QuizPreview />} />
             <Route path="People" element={<PeopleTable users={users} />} />
           </Routes>
         </div>
