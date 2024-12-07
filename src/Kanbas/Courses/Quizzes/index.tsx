@@ -81,7 +81,7 @@ function Quizzes() {
         <li className="list-group-item p-1 mb-3 fs-5 border-grey">
           <div className="wd-title p-3 ps-2 bg-secondary text-black">
             <BsGripVertical className="me-2 fs-3" />
-            <AiFillCaretDown /> ASSIGNMENT
+            <AiFillCaretDown /> QUIZ
             <BiDotsVerticalRounded className="float-end mt-2" />
             <AiOutlinePlus className="float-end mt-2" />
             <button
