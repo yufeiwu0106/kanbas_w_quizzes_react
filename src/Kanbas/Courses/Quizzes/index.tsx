@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { FaEllipsisV, FaCheckCircle, FaPlus } from "react-icons/fa";
 import "./index.css";
@@ -13,26 +13,45 @@ import QuizController from "./QuizController";
 import ContextMenu from "./ContextMenu";
 import { setQuizzes } from "./reducer";
 import quizzesData from "./quizzes"
+import { findQuizzesForCourse } from "./client";
+
+
 function Quizzes() {
   const dispatch = useDispatch();
 
   const { cid } = useParams();
 
 
-  const quizzes = quizzesData;
+  // const quizzes = quizzesData;
+  const [quizzes, setQuizzesState] = useState<any[]>([]);
 
   const fetchQuizzes = async () => {
-    // TODO: fetch quizzes from backend
-    const quizzes = quizzesData;
-    console.log(quizzes);
-
-
-    dispatch(setQuizzes(quizzes));
+    if (!cid) return; 
+    try {
+      const quizzesData = await findQuizzesForCourse(cid); // 调用 API 获取数据
+      console.log("Fetched quizzes: ", quizzesData); 
+      setQuizzesState(quizzesData); 
+      dispatch(setQuizzes(quizzesData)); 
+    } catch (error) {
+      console.error("Error fetching quizzes for course:", error);
+    }
   };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    }); 
+  };
+
+
+  
 
   useEffect(() => {
     fetchQuizzes();
-  }, []);
+  }, [cid]);
 
 
 
@@ -100,7 +119,9 @@ function Quizzes() {
                           </a>
                           <br />
                           <span className="text-black">
-                            <b>Due</b> {quiz.dueDate} | {quiz.point} pts <br />
+                          <b>Available:</b> {formatDate(quiz.availableDate)}
+                    <b> | Due:</b> {formatDate(quiz.dueDate)} 
+                    <b> | Points:</b> {quiz.point} pts 
                           </span>
                         </div>
                       </div>
