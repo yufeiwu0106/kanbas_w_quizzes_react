@@ -1,0 +1,58 @@
+.text-red {
+    color: red;
+  }
+  #wd-assignments {
+    width: 100%;
+    max-width: 800px; 
+    margin: 0 auto; 
+  }
+  
+  #wd-search-assignment {
+    height: 40px; 
+  }
+  
+  #wd-add-assignment-group, #wd-add-assignment {
+    white-space: nowrap;
+  }
+  
+  #wd-assignments {
+    margin-bottom: 20px;
+  }
+  
+  #wd-assignments-title .wd-assignments-title {
+    background-color: #f8f9fa;
+  }
+  
+  #wd-assignment-list .wd-assignment-list-item {
+    border-bottom: 1px solid #dee2e6;
+  }
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  
+  .card-header {
+    background-color: #f8f9fa;
+    font-weight: bold;
+  }
+  .custom-badge {
+    background-color: #e9ecef;
+    color: black;
+    border-radius: 20px; 
+    padding: 0.6em 2em; 
+    border: 1px solid #ced4da;
+    font-size: 1rem; 
+  }
+  
+  .list-group-item {
+    cursor: pointer;
+  }
+  
+  .list-group-item span {
+    white-space: nowrap;
+  }
+  
+  .ms-auto {
+    margin-left: auto;
+  }
+  
