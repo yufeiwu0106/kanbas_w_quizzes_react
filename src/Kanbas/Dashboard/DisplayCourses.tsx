@@ -25,7 +25,9 @@ export default function EnrolledCourses({
 
   console.log("courses ", courses);
   console.log("enrolling ", enrolling);
-
+  console.log("currentUser:", currentUser); // 打印当前用户
+  console.log("enrollments:", enrollments); // 打印用户的课程注册信息
+  
   return (
     <div>
       <h2 id="wd-dashboard-published">
@@ -41,6 +43,7 @@ export default function EnrolledCourses({
       <div id="wd-dashboard-courses" className="row">
         <div className="row row-cols-1 row-cols-md-5 g-4">
           {courses.map((course) => {
+            console.log("Course object:", course); // 打印每个课程对象
             const enrolledCourse = course;
             const enrollmentObj = enrolledCourse
               ? enrollments.find(
@@ -49,7 +52,8 @@ export default function EnrolledCourses({
                     enrollment.course === enrolledCourse._id
                 )
               : null;
-
+              console.log("Enrolled Course:", enrolledCourse); // 打印当前课程
+              console.log("Enrollment Object:", enrollmentObj); // 打印注册对象
             return (
               <div
                 className="wd-dashboard-course col"
@@ -79,9 +83,11 @@ export default function EnrolledCourses({
 
                     <button
                       className="btn btn-primary"
-                      onClick={() =>
-                        navigate(`/Kanbas/Courses/${course._id}/Home`)
-                      }
+                      onClick={() => {
+                        console.log("Button clicked for course:", course._id); // 打印课程ID
+                        console.log("Navigating to:", `/Kanbas/Courses/${course._id}/Home`); // 打印生成的路径
+                        navigate(`/Kanbas/Courses/${course._id}/Home`);
+                      }}
                     >
                       {" "}
                       Go{" "}

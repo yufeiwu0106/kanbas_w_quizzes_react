@@ -18,29 +18,14 @@ function Quizzes() {
 
   const { cid } = useParams();
 
-  const quizzes = quizzesData;
 
-  console.log(quizzes);
+  const quizzes = quizzesData;
 
   const fetchQuizzes = async () => {
     // TODO: fetch quizzes from backend
-    const quizzes = [
-        {
-          _id: 1,
-          title: "Q1 - HTML",
-          dueDate: "2024-03-25",
-          point: 100,
-          status: "Published",
-        },
-        {
-          _id: 2,
-          title: "Q2 - CSS",
-          dueDate: "2024-04-01",
-          point: 100,
-          status: "Published",
-        },
-        // Add more quiz items as needed
-      ];    
+    const quizzes = quizzesData;
+    console.log(quizzes);
+
 
     dispatch(setQuizzes(quizzes));
   };
