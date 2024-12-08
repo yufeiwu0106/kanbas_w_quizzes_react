@@ -9,7 +9,7 @@ import { AiFillCaretDown } from "react-icons/ai";
 import { BiDotsVerticalRounded } from "react-icons/bi";
 import { GiNotebook } from "react-icons/gi";
 import { RxRocket } from "react-icons/rx";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import QuizController from "./QuizController";
 import ContextMenu from "./ContextMenu";
 import { setQuizzes } from "./reducer";
@@ -18,7 +18,7 @@ import * as quizClient from "./client";
 
 function Quizzes() {
   const dispatch = useDispatch();
-
+  const { currentUser } = useSelector((state: any) => state.accountReducer);
   const { cid } = useParams();
 
   // const quizzes = quizzesData;
@@ -27,10 +27,18 @@ function Quizzes() {
   const fetchQuizzes = async () => {
     if (!cid) return;
     try {
-      const quizzesData = await findQuizzesForCourse(cid); // 调用 API 获取数据
+      const quizzesData = await quizClient.findQuizzesForCourse(cid); // Fetch quizzes data from API
       console.log("Fetched quizzes: ", quizzesData);
-      setQuizzesState(quizzesData);
-      dispatch(setQuizzes(quizzesData));
+
+      // Fetch questions for each quiz and set the question count
+      const quizzesWithQuestionCount = await Promise.all(
+        quizzesData.map(async (quiz: any) => {
+          const questions = await quizClient.findQuestionsForQuiz(quiz._id);
+          return { ...quiz, questionCount: questions.length };
+        })
+      );
+      setQuizzesState(quizzesWithQuestionCount);
+      dispatch(setQuizzes(quizzesWithQuestionCount));
     } catch (error) {
       console.error("Error fetching quizzes for course:", error);
     }
@@ -54,6 +62,23 @@ function Quizzes() {
     const status = await quizClient.deleteQuiz(quizId);
     setQuizzesState(quizzes.filter((quiz) => quiz._id !== quizId));
     fetchQuizzes();
+  };
+
+  const getAvailabilityStatus = (
+    availableDate: string,
+    availableUntilDate: string
+  ) => {
+    const now = new Date();
+    const availableFrom = new Date(availableDate);
+    const availableUntil = new Date(availableUntilDate);
+
+    if (now < availableFrom) {
+      return `Not available until ${formatDate(availableDate)}`;
+    } else if (now > availableUntil) {
+      return "Closed";
+    } else {
+      return "Available";
+    }
   };
 
   return (
@@ -118,9 +143,23 @@ function Quizzes() {
                           </a>
                           <br />
                           <span className="text-black">
-                            <b>Available:</b> {formatDate(quiz.availableDate)}
+                            <b>
+                              {getAvailabilityStatus(
+                                quiz.availableDate,
+                                quiz.dueDate
+                              )}
+                            </b>
                             <b> | Due:</b> {formatDate(quiz.dueDate)}
                             <b> | Points:</b> {quiz.point} pts
+                            {/* Number of questions*/}
+                            <b> | {quiz.questionCount} </b>Questions
+                            {/* to do: Score if the current user is a student,*/}
+                            {currentUser.role === "STUDENT" && (
+                              <>
+                                <b> | Score:</b>
+                                {/* Add the score logic or value here */}
+                              </>
+                            )}
                           </span>
                         </div>
                       </div>
