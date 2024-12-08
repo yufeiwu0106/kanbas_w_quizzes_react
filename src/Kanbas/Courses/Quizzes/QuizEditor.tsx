@@ -9,11 +9,11 @@ export default function QuizEditor() {
 
   // get current user
   const { currentUser } = useSelector((state: any) => state.accountReducer);
-  const isFaculty = currentUser.role == "FACULTY";
+  const isFaculty = currentUser.role === "FACULTY";
 
   // get quizzes
   const { quizzes } = useSelector((state: any) => state.quizzesReducer);
-  const quiz = quizzes.find((q: any) => q._id == qid);
+  const quiz = quizzes.find((q: any) => q._id === qid);
 
   // quiz state
   const [quizName, setQuizName] = useState(quiz?.title || "Untitled");
@@ -27,13 +27,10 @@ export default function QuizEditor() {
   const [untilDate, setUntilDate] = useState(quiz?.untilDate || "");
 
   return (
-
     // Add a buttom "Preview" to navigate to quiz preview screen
     // href={`#/Kanbas/Courses/${cid}/Quizzes/${quiz._id}/Quesions/}`}
 
     <div id="wd-quiz-editor" className="container mt-4">
-      
-
       {/* Quizz Name */}
       <div className="mb-3 row">
         <label htmlFor="wd-name" className="col-sm-2 col-form-label">

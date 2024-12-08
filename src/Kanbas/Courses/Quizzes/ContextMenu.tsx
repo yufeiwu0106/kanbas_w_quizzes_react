@@ -1,83 +1,138 @@
 import { FaTrash } from "react-icons/fa";
-
+import { RiForbidLine } from "react-icons/ri";
 import { FaCheckCircle, FaCircle } from "react-icons/fa";
 import { IoEllipsisVertical } from "react-icons/io5";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import * as quizClient from "./client";
+import { useParams } from "react-router";
+import { useNavigate } from "react-router-dom";
 
-export default function ContextMenu({ quizId }: { quizId: string }) {
+export default function ContextMenu({
+  quizId,
+  deleteQuiz,
+}: {
+  quizId: string;
+  deleteQuiz: (quizId: string) => void;
+}) {
+  const { cid } = useParams();
   const dispatch = useDispatch();
   const { currentUser } = useSelector((state: any) => state.accountReducer);
-  const isFaculty = currentUser.role == "FACULTY";
+  const [quiz, setQuiz] = useState<any>();
+  const [isPublished, setPublish] = useState(false);
+  const [isContextMenuOpen, setIsContextMenuOpen] = useState(false);
+  const isFaculty = currentUser.role === "FACULTY";
+  const navigate = useNavigate();
 
-  const handleConfirmDelete = async () => {
-    // TODO: Delete quiz
+  const fetchQuiz = async () => {
+    const quiz = await quizClient.findOneSpecificQuiz(quizId as string);
+    setQuiz(quiz);
+    setPublish(quiz.status === "Published");
+  };
+  useEffect(() => {
+    fetchQuiz();
+  }, [quizId]);
+
+  const toggleContextMenu = () => {
+    setIsContextMenuOpen((prev) => !prev);
+  };
+
+  // // Delete quiz
+  // const handleDelete = async (quizId: string) => {
+  //   const status = await quizClient.deleteQuiz(quizId);
+  //   toggleContextMenu();
+  // };
+
+  // Edit quiz
+  const handleEdit = async () => {
+    console.log("Course ID:", cid);
+    console.log("Quiz ID:", quizId);
+    navigate(`/Kanbas/Courses/${cid}/Quizzes/${quizId}`);
+    toggleContextMenu();
+  };
+
+  // Publish/Unpublish quiz
+  const handlePublish = async () => {
+    // Update the local state to reflect the new status
+    setPublish(!isPublished);
+    try {
+      // Toggle the `status` field
+      const updatedQuiz = {
+        ...quiz,
+        status: isPublished ? "Unpublished" : "Published",
+      };
+      // Update the quiz using the API
+      await quizClient.updateQuiz(quizId, updatedQuiz);
+      // Re-fetch the quiz to ensure state consistency
+      fetchQuiz();
+      toggleContextMenu();
+    } catch (error) {
+      console.error("Error updating quiz status:", error);
+    }
   };
 
   return (
     <div id="wd-modules-controls" className="text-nowrap">
-      {/* Green check icon */}
-      <span className="me-1 position-relative">
-        <FaCheckCircle
+      {/* when quiz is unpublished */}
+      {!isPublished && (
+        <RiForbidLine
           style={{ top: "2px" }}
-          className="text-success me-1 position-absolute fs-5"
+          className="text-danger me-4 position-relative fs-4"
         />
-        <FaCircle className="text-white me-1 fs-6" />
-      </span>
+      )}
 
-      <IoEllipsisVertical className="fs-4" />
+      {/* when quiz is published */}
+      {/* Green check icon */}
+      {isPublished && (
+        <span className="me-4 position-relative">
+          <FaCheckCircle
+            style={{ top: "2px" }}
+            className="text-success me-1 position-absolute fs-5"
+          />
+          <FaCircle className="text-white me-1 fs-6" />
+        </span>
+      )}
 
       {isFaculty && (
-        <>
-          <button
-            id="wd-delete-quiz-btn"
-            className="btn btn-lg btn-white me-1"
-            data-bs-toggle="modal"
-            data-bs-target={`#wd-delete-quiz-dialog-${quizId}`}
-          >
-            <FaTrash className="text-danger me-2 mb-1" />
+        <IoEllipsisVertical
+          className="fs-4 me-3"
+          onClick={() => toggleContextMenu()}
+        />
+      )}
+
+      {isContextMenuOpen && (
+        <div
+          className="dropdown-menu show position-absolute"
+          style={{
+            right: "0",
+            top: "2rem",
+            zIndex: 1000,
+            backgroundColor: "white",
+            boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
+          }}
+        >
+          {/* Edit Option */}
+          <button className="dropdown-item" onClick={handleEdit}>
+            Edit
           </button>
 
-          <div
-            id={`wd-delete-quiz-dialog-${quizId}`}
-            className="modal fade"
-            data-bs-backdrop="static"
-            data-bs-keyboard="false"
+          {/* Delete Option */}
+          <button
+            className="dropdown-item"
+            onClick={() => {
+              deleteQuiz(quizId);
+              toggleContextMenu();
+            }}
           >
-            <div className="modal-dialog">
-              <div className="modal-content">
-                <div className="modal-header">
-                  <h1 className="modal-title fs-5" id="staticBackdropLabel">
-                    Remove the quiz {quizId}?{" "}
-                  </h1>
-                  <button
-                    type="button"
-                    className="btn-close"
-                    data-bs-dismiss="modal"
-                  ></button>
-                </div>
+            Delete
+          </button>
 
-                <div className="modal-footer">
-                  <button
-                    type="button"
-                    className="btn btn-secondary"
-                    data-bs-dismiss="modal"
-                  >
-                    Cancel{" "}
-                  </button>
-                  <button
-                    onClick={handleConfirmDelete}
-                    type="button"
-                    data-bs-dismiss="modal"
-                    className="btn btn-danger"
-                  >
-                    Delete{" "}
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </>
+          {/* Publish/Unpublish Option */}
+          <button className="dropdown-item" onClick={handlePublish}>
+            {isPublished ? "Unpublish" : "Publish"}
+          </button>
+        </div>
       )}
     </div>
   );

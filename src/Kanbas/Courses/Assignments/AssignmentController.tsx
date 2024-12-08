@@ -1,15 +1,14 @@
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-
 // Add assignment
-export default function AssignmentController( {cid } : {cid: any;}) {
+export default function AssignmentController({ cid }: { cid: any }) {
   const { currentUser } = useSelector((state: any) => state.accountReducer);
 
   const navigate = useNavigate();
   const addAssignment = () => {
-    navigate(`/Kanbas/Courses/${cid}/Assignments/New%20Assignment`)
-  }
+    navigate(`/Kanbas/Courses/${cid}/Assignments/New%20Assignment`);
+  };
 
   if (currentUser.role != "FACULTY") {
     return null;
@@ -23,7 +22,11 @@ export default function AssignmentController( {cid } : {cid: any;}) {
       >
         + Group
       </button>
-      <button onClick={addAssignment} id="wd-add-assignment" className="btn btn-lg btn-danger">
+      <button
+        onClick={addAssignment}
+        id="wd-add-assignment"
+        className="btn btn-lg btn-danger"
+      >
         + Assignment
       </button>
     </div>
