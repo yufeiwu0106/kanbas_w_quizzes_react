@@ -26,7 +26,7 @@ export default function ContextMenu({
   const navigate = useNavigate();
 
   const fetchQuiz = async () => {
-    const quiz = await quizClient.findOneSpecificQuiz(quizId as string);
+    const quiz = await quizClient.findQuizById(quizId as string);
     setQuiz(quiz);
     setPublish(quiz.status === "Published");
   };
