@@ -21,7 +21,7 @@ export const findQuestionsForQuiz = async (quizId: string) => {
   return response.data;
 };
 
-export const findOneSpecificQuiz = async (quizId: string) => {
+export const findQuizById = async (quizId: string) => {
   const response = await axiosWithCredentials.get(`${QUIZZES_API}/${quizId}`);
   return response.data;
 };

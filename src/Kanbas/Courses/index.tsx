@@ -18,7 +18,7 @@ import NewQuestionEditor from "./Quizzes/QuestionEditor/NewQuestionEditor";
 
 export default function Courses({ courses }: { courses: any[] }) {
   const { cid } = useParams();
-  const course = courses.find((course) => course._id === cid);
+  const course = courses?.find((course) => course?._id === cid) || null;
   const { pathname } = useLocation();
 
   // get users for the course
