@@ -124,7 +124,12 @@ function Quizzes() {
                           </span>
                         </div>
                       </div>
-                      <ContextMenu quizId={quiz._id} deleteQuiz={deleteQuiz} />
+                      <div style={{ position: "relative", right: "2rem" }}>
+                        <ContextMenu
+                          quizId={quiz._id}
+                          deleteQuiz={deleteQuiz}
+                        />
+                      </div>
                     </div>
                   </li>
                 )

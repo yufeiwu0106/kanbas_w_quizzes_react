@@ -38,12 +38,6 @@ export default function ContextMenu({
     setIsContextMenuOpen((prev) => !prev);
   };
 
-  // // Delete quiz
-  // const handleDelete = async (quizId: string) => {
-  //   const status = await quizClient.deleteQuiz(quizId);
-  //   toggleContextMenu();
-  // };
-
   // Edit quiz
   const handleEdit = async () => {
     console.log("Course ID:", cid);
@@ -73,7 +67,7 @@ export default function ContextMenu({
   };
 
   return (
-    <div id="wd-modules-controls" className="text-nowrap">
+    <div id="wd-quiz-controls" className="text-nowrap">
       {/* when quiz is unpublished */}
       {!isPublished && (
         <RiForbidLine
@@ -103,10 +97,9 @@ export default function ContextMenu({
 
       {isContextMenuOpen && (
         <div
-          className="dropdown-menu show position-absolute"
+          className="dropdown-menu show position-relative"
           style={{
-            right: "0",
-            top: "2rem",
+            right: "auto",
             zIndex: 1000,
             backgroundColor: "white",
             boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
