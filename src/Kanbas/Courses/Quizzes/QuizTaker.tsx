@@ -1,20 +1,22 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { findQuestionsForQuiz } from "./client";
 import { useSelector } from "react-redux";
 import axios from "axios";
 
 const QuizTaker = ({ onSubmit }: { onSubmit?: (score: number) => void }) => {
-  const { qid: quizId } = useParams();
+  const { cid, qid } = useParams();
+  const navigate = useNavigate();
   const [questions, setQuestions] = useState<any[]>([]);
   const [answers, setAnswers] = useState<any>({});
   const [loading, setLoading] = useState<boolean>(true);
 
   const { currentUser } = useSelector((state: any) => state.accountReducer);
+  const isFaculty = currentUser.role === "FACULTY";
 
   const fetchQuestions = async () => {
     try {
-      const data = await findQuestionsForQuiz(quizId || "");
+      const data = await findQuestionsForQuiz(qid || "");
       setQuestions(data);
     } catch (error) {
       console.error("Error fetching questions:", error);
@@ -34,7 +36,10 @@ const QuizTaker = ({ onSubmit }: { onSubmit?: (score: number) => void }) => {
       let isCorrect = false;
       let pointsEarned = 0;
 
-      if (question.type === "True/False" || question.type === "Multiple Choice") {
+      if (
+        question.type === "True/False" ||
+        question.type === "Multiple Choice"
+      ) {
         isCorrect = userAnswer === question.correctAnswer;
         pointsEarned = isCorrect ? question.points : 0;
       } else if (question.type === "Fill in the Blank") {
@@ -54,7 +59,7 @@ const QuizTaker = ({ onSubmit }: { onSubmit?: (score: number) => void }) => {
 
     try {
       const record = {
-        quizId,
+        quizId: qid,
         userId: currentUser._id,
         answers: gradedAnswers,
         score: totalScore,
@@ -73,7 +78,7 @@ const QuizTaker = ({ onSubmit }: { onSubmit?: (score: number) => void }) => {
 
   useEffect(() => {
     fetchQuestions();
-  }, [quizId]);
+  }, [qid]);
 
   if (loading) {
     return <div>Loading questions...</div>;
@@ -84,10 +89,14 @@ const QuizTaker = ({ onSubmit }: { onSubmit?: (score: number) => void }) => {
       <ul className="list-group">
         {questions.map((question, index) => (
           <li key={question._id} className="list-group-item mb-3">
-            <h5>
-              Q{index + 1}: {question.title}
-            </h5>
-            <p>{question.description}</p>
+            <div className="d-flex justify-content-between align-items-start">
+              <div>
+                <h5>
+                  Q{index + 1}: {question.title}
+                </h5>
+                <p>{question.description}</p>
+              </div>
+            </div>
 
             {question.type === "True/False" && (
               <div>
@@ -122,7 +131,9 @@ const QuizTaker = ({ onSubmit }: { onSubmit?: (score: number) => void }) => {
                         type="radio"
                         name={`question-${index}`}
                         value={option.text}
-                        onChange={() => handleAnswerChange(question._id, option.text)}
+                        onChange={() =>
+                          handleAnswerChange(question._id, option.text)
+                        }
                       />{" "}
                       {option.text}
                     </label>
@@ -138,7 +149,9 @@ const QuizTaker = ({ onSubmit }: { onSubmit?: (score: number) => void }) => {
                   <input
                     type="text"
                     className="form-control"
-                    onChange={(e) => handleAnswerChange(question._id, e.target.value)}
+                    onChange={(e) =>
+                      handleAnswerChange(question._id, e.target.value)
+                    }
                   />
                 </label>
               </div>
