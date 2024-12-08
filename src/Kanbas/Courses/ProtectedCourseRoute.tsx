@@ -13,6 +13,7 @@ export default function ProtectedRoute({
 }) {
   const { currentUser } = useSelector((state: any) => state.accountReducer);
   const isFaculty = currentUser.role == "FACULTY";
+  const isAdmin = currentUser.role == "ADMIN";
 
   const { enrollments } = useSelector(
     (state: { enrollmentsReducer: { enrollments: any[] } }) =>
@@ -32,7 +33,7 @@ export default function ProtectedRoute({
   console.log("isFaculty", isFaculty);
   console.log("enrollmentObj", enrollmentObj);
 
-  if (isFaculty || enrollmentObj) {
+  if (isFaculty || isAdmin || enrollmentObj) {
     return children;
   } else {
     return <Navigate to="/Kanbas/Dashboard" />;
