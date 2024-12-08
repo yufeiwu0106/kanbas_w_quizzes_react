@@ -19,11 +19,18 @@ export default function ProtectedRoute({
       state.enrollmentsReducer
   );
 
+  console.log("course", course);
+  console.log("currentUser", currentUser);
+  console.log("enrollments", enrollments);
+
   const enrollmentObj = enrollments.find(
     (enrollment) =>
-      enrollment.user._id === currentUser._id &&
-      enrollment.course._id === course._id
+      enrollment.user === currentUser._id &&
+      enrollment.course === course._id
   );
+
+  console.log("isFaculty", isFaculty);
+  console.log("enrollmentObj", enrollmentObj);
 
   if (isFaculty || enrollmentObj) {
     return children;
