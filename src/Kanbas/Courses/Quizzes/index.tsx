@@ -12,7 +12,6 @@ import { useDispatch } from "react-redux";
 import QuizController from "./QuizController";
 import ContextMenu from "./ContextMenu";
 import { setQuizzes } from "./reducer";
-import quizzesData from "./quizzes"
 import { findQuizzesForCourse } from "./client";
 
 

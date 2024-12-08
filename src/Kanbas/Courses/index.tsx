@@ -12,6 +12,7 @@ import ProtectedCourseRoute from "./ProtectedCourseRoute";
 import { Navigate, Route, Routes, useLocation, useParams } from "react-router";
 import { useEffect, useState } from "react";
 import * as client from "./client";
+import QuizDetail from "./Quizzes/QuizDetail";
 
 export default function Courses({ courses }: { courses: any[] }) {
   const { cid } = useParams();
@@ -62,8 +63,9 @@ export default function Courses({ courses }: { courses: any[] }) {
             <Route path="Assignments" element={<Assignments />} />
             <Route path="Assignments/:aid" element={<AssignmentEditor />} />
             <Route path="Quizzes" element={<Quizzes />} />
-            <Route path="Quizzes/:qid" element={<QuizEditor />} />
-            <Route path="Quizzes/:qid/Questions" element={<QuizPreview />} />
+            <Route path="Quizzes/:qid/Editor" element={<QuizEditor />} /> 
+            <Route path="Quizzes/:qid" element={<QuizDetail />} />
+            <Route path="Quizzes/:qid/Preview" element={<QuizPreview />} />
             <Route path="People" element={<PeopleTable users={users} />} />
           </Routes>
         </div>

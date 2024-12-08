@@ -32,14 +32,7 @@ export default function QuizEditor() {
     // href={`#/Kanbas/Courses/${cid}/Quizzes/${quiz._id}/Quesions/}`}
 
     <div id="wd-quiz-editor" className="container mt-4">
-      {/* Add a buttom "Preview" to navigate to quiz preview screen */}
-      <button
-        className="btn btn-primary"
-        // use href on click
-        onClick={() => navigate(`/Kanbas/Courses/${cid}/Quizzes/${quiz._id}/Questions/`)}
-      >
-        Preview
-      </button>
+      
 
       {/* Quizz Name */}
       <div className="mb-3 row">
