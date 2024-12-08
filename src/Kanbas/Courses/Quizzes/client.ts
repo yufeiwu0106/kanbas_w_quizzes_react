@@ -13,10 +13,38 @@ export const findQuizzesForCourse = async (courseId: string) => {
 };
 
 export const findQuestionsForQuiz = async (quizId: string) => {
-    console.log("Fetching questions for quizId:", quizId);
+  console.log("Fetching questions for quizId:", quizId);
   console.log("Fetching from URL:", `${QUIZZES_API}/${quizId}/questions`);
   const response = await axiosWithCredentials.get(
     `${QUIZZES_API}/${quizId}/questions`
+  );
+  return response.data;
+};
+
+export const findOneSpecificQuiz = async (quizId: string) => {
+  const response = await axiosWithCredentials.get(`${QUIZZES_API}/${quizId}`);
+  return response.data;
+};
+
+export const createQuizForCourse = async (courseId: string, newQuiz: any) => {
+  const response = await axiosWithCredentials.post(
+    `${COURSES_API}/${courseId}/quizzes`,
+    newQuiz
+  );
+  return response.data;
+};
+
+export const updateQuiz = async (quizId: string, updatedQuiz: any) => {
+  const { data } = await axiosWithCredentials.put(
+    `${QUIZZES_API}/${quizId}`,
+    updatedQuiz
+  );
+  return data;
+};
+
+export const deleteQuiz = async (quizId: string) => {
+  const response = await axiosWithCredentials.delete(
+    `${QUIZZES_API}/${quizId}`
   );
   return response.data;
 };
