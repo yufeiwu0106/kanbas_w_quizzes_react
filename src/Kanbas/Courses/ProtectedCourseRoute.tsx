@@ -26,8 +26,8 @@ export default function ProtectedRoute({
 
   const enrollmentObj = enrollments.find(
     (enrollment) =>
-      enrollment.user._id === currentUser._id &&
-      enrollment.course._id === course._id
+      enrollment.user === currentUser._id &&
+      enrollment.course === course._id
   );
 
   console.log("isFaculty", isFaculty);
