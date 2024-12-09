@@ -1,14 +1,16 @@
 import { useSelector } from "react-redux";
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import * as quizClient from "./client";
 import QuizTab from "./QuizTab";
+import Navigation from "./QuestionEditor/Navigation";
 
 export default function QuizEditor() {
   const { cid, qid } = useParams();
   const navigate = useNavigate();
   const isNewQuiz = qid === "NewQuiz";
+  const { pathname } = useLocation();
 
   // get current user
   const { currentUser } = useSelector((state: any) => state.accountReducer);
@@ -143,7 +145,8 @@ export default function QuizEditor() {
 
   return (
     <div id="wd-quiz-editor" className="container mt-4">
-      <QuizTab />
+      <Navigation pathname={pathname} />
+
       <br/>
       {/* Quizz Name */}
       <div className="mb-3 row">
