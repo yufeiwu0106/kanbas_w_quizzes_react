@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import * as quizClient from "./client";
+import QuizTab from "./QuizTab";
 
 export default function QuizEditor() {
   const { cid, qid } = useParams();
@@ -142,6 +143,8 @@ export default function QuizEditor() {
 
   return (
     <div id="wd-quiz-editor" className="container mt-4">
+      <QuizTab />
+      <br/>
       {/* Quizz Name */}
       <div className="mb-3 row">
         <label htmlFor="wd-name" className="col-sm-2 col-form-label">
