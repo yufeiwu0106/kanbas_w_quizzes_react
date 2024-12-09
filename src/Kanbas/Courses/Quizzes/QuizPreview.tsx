@@ -11,7 +11,7 @@ import {
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { MdEdit } from "react-icons/md";
 import Editor from "react-simple-wysiwyg";
-
+import QuizTab from "./QuizTab";
 const QuizPreview = () => {
   const { cid, qid: quizId } = useParams();
   const navigate = useNavigate();
@@ -123,6 +123,8 @@ const QuizPreview = () => {
 
   return (
     <div className="container mt-4">
+      <QuizTab />
+      <br/>
       <h1 className="mb-4">Quiz Preview</h1>
       <QuizTaker />
 
