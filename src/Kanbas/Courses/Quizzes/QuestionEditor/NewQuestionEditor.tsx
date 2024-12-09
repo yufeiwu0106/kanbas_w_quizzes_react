@@ -9,6 +9,11 @@ import { Question } from "../../../types";
 import * as client from "./client";
 import { addQuestion, editQuestion } from "./reducer";
 
+interface Choice {
+  text: string;
+  isCorrect: boolean;
+}
+
 const QuestionEditor = () => {
   const { cid, qid, questionId } = useParams();
   const navigate = useNavigate();
@@ -27,7 +32,12 @@ const QuestionEditor = () => {
     correctAnswer: "",
   });
 
-  const [choices, setChoices] = useState<string[]>(["", "", "", ""]);
+  const [choices, setChoices] = useState<Choice[]>([
+    { text: "", isCorrect: false },
+    { text: "", isCorrect: false },
+    { text: "", isCorrect: false },
+    { text: "", isCorrect: false },
+  ]);
   const [selectedChoiceIndex, setSelectedChoiceIndex] = useState<number | null>(
     -1
   );
@@ -48,9 +58,21 @@ const QuestionEditor = () => {
         });
 
         if (questionToEdit.type === "Multiple Choice") {
-          setChoices(questionToEdit.choices || ["", "", "", ""]);
-          const correctIndex = questionToEdit.choices?.findIndex(
-            (c: string) => c === questionToEdit.correctAnswer
+          const choicesWithCorrect = (questionToEdit.options || []).map(
+            (option: any) => ({
+              text: option.text || "",
+              isCorrect: option.isCorrect || false,
+            })
+          );
+
+          while (choicesWithCorrect.length < 4) {
+            choicesWithCorrect.push({ text: "", isCorrect: false });
+          }
+
+          setChoices(choicesWithCorrect);
+
+          const correctIndex = choicesWithCorrect.findIndex(
+            (c: Choice) => c.isCorrect
           );
           setSelectedChoiceIndex(correctIndex >= 0 ? correctIndex : null);
         }
@@ -63,16 +85,22 @@ const QuestionEditor = () => {
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const newChoices = [...choices];
-    newChoices[index] = event.target.value;
+    newChoices[index] = { ...newChoices[index], text: event.target.value };
     setChoices(newChoices);
   };
 
   const handleCorrectAnswerChange = (choice: string) => {
     setCurrQuestion({ ...currQuestion, correctAnswer: choice });
+
+    const newChoices = choices.map((choiceObj) => ({
+      ...choiceObj,
+      isCorrect: choiceObj.text === choice ? true : false,
+    }));
+    setChoices(newChoices);
   };
 
   const handleAddChoice = () => {
-    setChoices([...choices, ""]);
+    setChoices([...choices, { text: "", isCorrect: false }]);
   };
 
   const handleDeleteChoice = (index: number) => {
@@ -81,23 +109,22 @@ const QuestionEditor = () => {
 
   const handleSave = async () => {
     try {
-      if (!currQuestion.title) {
-        alert("Please enter a question title");
+      if (!currQuestion.title || !currQuestion.question) {
+        alert("Please fill in all required fields");
         return;
       }
 
-      if (!currQuestion.question) {
-        const messages = {
-          "Multiple Choice":
-            "Please enter the question and at least two choices",
-          "True/False": "Please enter the question",
-          "Fill in the Blank": "Please enter the question with blank spaces",
-        };
-        alert(messages[currQuestion.type as keyof typeof messages]);
-        return;
-      }
-
-      let questionData: any = {
+      let questionData: {
+        quiz: string | undefined;
+        title: string;
+        type: string;
+        points: number;
+        description: string;
+        options?: Array<{ text: string; isCorrect: boolean }>;
+        answers?: { [key: string]: string };
+        correctAnswers?: string[];
+        correctAnswer?: boolean;
+      } = {
         quiz: qid,
         title: currQuestion.title,
         type: currQuestion.type,
@@ -106,63 +133,35 @@ const QuestionEditor = () => {
       };
 
       if (currQuestion.type === "Multiple Choice") {
-        const validChoices = choices.filter((choice) => choice.trim() !== "");
-        if (validChoices.length < 2) {
-          alert("Multiple choice questions must have at least two options");
+        const validChoices = choices.filter(
+          (choice) => choice.text.trim() !== ""
+        );
+        const hasCorrectAnswer = validChoices.some(
+          (choice) => choice.isCorrect
+        );
+        if (!hasCorrectAnswer) {
+          alert("Please select a correct answer");
           return;
         }
-        if (
-          !currQuestion.correctAnswers ||
-          currQuestion.correctAnswers.length === 0
-        ) {
-          alert("Please select at least one correct answer");
-          return;
-        }
-
-        questionData.options = validChoices.map((choice) => ({
-          text: choice,
-          isCorrect: (currQuestion.correctAnswers || []).includes(choice),
-        }));
+        questionData.options = validChoices;
       } else if (currQuestion.type === "True/False") {
-        if (!currQuestion.answers["1"]) {
-          alert("Please select True or False as the correct answer");
-          return;
-        }
         questionData.correctAnswer = currQuestion.answers["1"] === "True";
       } else if (currQuestion.type === "Fill in the Blank") {
-        if (!currQuestion.correctAnswer) {
-          alert("Please provide the correct answer");
-          return;
-        }
-        questionData.correctAnswers = [currQuestion.correctAnswer];
+        questionData.correctAnswers = currQuestion.correctAnswers;
       }
 
-      let savedQuestion;
       if (questionId) {
-        savedQuestion = await client.updateQuizQuestion(
-          questionId,
-          questionData
-        );
-        if (savedQuestion) {
-          dispatch(editQuestion(savedQuestion));
-          alert("Question updated successfully!");
-        }
+        await client.updateQuizQuestion(questionId, questionData);
+        dispatch(editQuestion({ ...questionData, _id: questionId }));
       } else {
-        savedQuestion = await client.addNeWQuizQuestion(qid, questionData);
-        if (savedQuestion) {
-          dispatch(addQuestion(savedQuestion));
-          alert("New question created successfully!");
-        }
+        const response = await client.addNeWQuizQuestion(qid, questionData);
+        dispatch(addQuestion(response));
       }
 
-      if (savedQuestion) {
-        navigate(`/Kanbas/Courses/${cid}/Quizzes/${qid}/Preview`);
-      } else {
-        throw new Error("Failed to save question");
-      }
+      navigate(`/Kanbas/Courses/${cid}/Quizzes/${qid}/Preview`);
     } catch (error) {
       console.error("Error saving question:", error);
-      alert("Error saving question. Please try again.");
+      alert("Failed to save question. Please try again.");
     }
   };
 
