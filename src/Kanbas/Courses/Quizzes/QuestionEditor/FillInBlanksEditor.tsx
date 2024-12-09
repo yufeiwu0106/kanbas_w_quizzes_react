@@ -11,6 +11,7 @@ const FillInBlanksEditor: React.FC<FillInBlanksEditorProps> = ({
   currQuestion,
   setCurrQuestion,
 }) => {
+  // Add a new blank answer to the list
   const handleAddAnswer = () => {
     const currentAnswers = currQuestion.correctAnswers || [
       currQuestion.correctAnswer || "",
@@ -21,6 +22,7 @@ const FillInBlanksEditor: React.FC<FillInBlanksEditorProps> = ({
     });
   };
 
+  // Handle answer input changes
   const handleAnswerChange = (index: number, value: string) => {
     const newAnswers = [
       ...(currQuestion.correctAnswers || [currQuestion.correctAnswer || ""]),
@@ -29,10 +31,11 @@ const FillInBlanksEditor: React.FC<FillInBlanksEditorProps> = ({
     setCurrQuestion({
       ...currQuestion,
       correctAnswers: newAnswers,
-      correctAnswer: newAnswers[0], // Keep the first answer as primary for backward compatibility
+      correctAnswer: newAnswers[0], // Ensure backward compatibility
     });
   };
 
+  // Delete a specific answer from the list
   const handleDeleteAnswer = (index: number) => {
     const newAnswers = [...(currQuestion.correctAnswers || [])];
     newAnswers.splice(index, 1);
@@ -50,6 +53,8 @@ const FillInBlanksEditor: React.FC<FillInBlanksEditorProps> = ({
         Enter your question text, then provide the correct answers that should
         fill in the blank. Add multiple answers if needed.
       </p>
+
+      {/* Question Editor */}
       <b>Question:</b>
       <Editor
         id="questionDesc"
@@ -60,6 +65,8 @@ const FillInBlanksEditor: React.FC<FillInBlanksEditorProps> = ({
         aria-required="true"
       />
       <br />
+
+      {/* Correct Answers Input */}
       <div className="mb-3">
         <b>Correct Answers:</b>
         {(

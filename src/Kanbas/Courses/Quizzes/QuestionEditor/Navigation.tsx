@@ -1,31 +1,35 @@
-import { useParams } from "react-router";
+import { useParams, useNavigate } from "react-router";
 
 export default function Navigation({ pathname }: { pathname: string }) {
   const { cid, qid } = useParams();
+  const navigate = useNavigate();
 
   // Determine if the current path is for editing or creating a new quiz
-  const isEditMode = pathname.includes("edit");
-  const isEditDetail = pathname.includes("editdetail");
-  const isNewDetail = pathname.includes("newdetail");
-  const isQuestionList = pathname.includes("QuestionList");
+  const isPreview = pathname.includes("Preview");
+  const isDetails = !isPreview; // If not in preview, we're in details
 
-  // Generate hrefs based on the current mode
-  const detailsHref =
-    isEditMode || isQuestionList
-      ? `#/Kanbas/Courses/${cid}/Quizzes/${qid}/editdetail`
-      : `#/Kanbas/Courses/${cid}/Quizzes/newdetail`;
-  const questionsHref = `#/Kanbas/Courses/${cid}/Quizzes/${qid}/QuestionList`;
+  const handleDetailsClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    navigate(`/Kanbas/Courses/${cid}/Quizzes/${qid}`);
+  };
 
-  // Determine the styles and disabled status based on the pathname
+  const handleQuestionsClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    navigate(`/Kanbas/Courses/${cid}/Quizzes/${qid}/Preview`);
+  };
+
+  // Determine the styles based on active state
   const detailsStyle = {
-    color: isEditDetail || isNewDetail ? "black" : "#dc3545",
+    color: isDetails ? "black" : "#dc3545",
+    backgroundColor: isDetails ? "#f8f9fa" : "transparent",
+    borderBottom: isDetails ? "2px solid black" : "none",
   };
 
   const questionsStyle = {
-    color: isEditDetail ? "#dc3545" : isQuestionList ? "black" : "grey",
+    color: isPreview ? "black" : "#dc3545",
+    backgroundColor: isPreview ? "#f8f9fa" : "transparent",
+    borderBottom: isPreview ? "2px solid black" : "none",
   };
-
-  const questionsDisabled = isNewDetail;
 
   return (
     <div id="wd-quiz-editor">
@@ -33,11 +37,10 @@ export default function Navigation({ pathname }: { pathname: string }) {
         <li className="nav-item">
           <a
             id="quiz-edit"
-            href={detailsHref}
-            className={`nav-link ${
-              isEditDetail || isNewDetail ? "active" : ""
-            }`}
+            href="#"
+            className={`nav-link ${isDetails ? "active" : ""}`}
             style={detailsStyle}
+            onClick={handleDetailsClick}
           >
             Details
           </a>
@@ -45,13 +48,10 @@ export default function Navigation({ pathname }: { pathname: string }) {
         <li className="nav-item">
           <a
             id="questions-edit"
-            href={questionsHref}
-            className={`nav-link ${isQuestionList ? "active" : ""}`}
+            href="#"
+            className={`nav-link ${isPreview ? "active" : ""}`}
             style={questionsStyle}
-            aria-disabled={questionsDisabled}
-            onClick={(e) => {
-              if (questionsDisabled) e.preventDefault();
-            }}
+            onClick={handleQuestionsClick}
           >
             Questions
           </a>

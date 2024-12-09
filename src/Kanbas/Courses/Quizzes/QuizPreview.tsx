@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import QuizTaker from "./QuizTaker";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import * as client from "./QuestionEditor/client";
 import {
@@ -11,9 +11,11 @@ import {
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { MdEdit } from "react-icons/md";
 import Editor from "react-simple-wysiwyg";
-import QuizTab from "./QuizTab";
+import Navigation from "./QuestionEditor/Navigation";
+
 const QuizPreview = () => {
   const { cid, qid: quizId } = useParams();
+  const { pathname } = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { currentUser } = useSelector((state: any) => state.accountReducer);
@@ -123,9 +125,9 @@ const QuizPreview = () => {
 
   return (
     <div className="container mt-4">
-      <QuizTab />
-      <br/>
-      <h1 className="mb-4">Quiz Preview</h1>
+      <div id="wd-quiz-editor" className="mb-4">
+        <Navigation pathname={pathname} />
+      </div>
       <QuizTaker />
 
       {isFaculty && (

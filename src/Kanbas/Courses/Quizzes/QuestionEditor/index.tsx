@@ -1,36 +1,28 @@
-import React, { useEffect } from "react";
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { FaEdit, FaPlus, FaTrash } from "react-icons/fa";
-import { MdCancel } from "react-icons/md";
+import { useEffect } from "react";
 import { BsGripVertical } from "react-icons/bs";
 import { MdEdit } from "react-icons/md";
-import * as client from "./client";
-import {
-  setQuestion,
-  addQuestion,
-  deleteQuestion,
-  editQuestion,
-} from "./reducer";
-import Navigation from "./Navigation";
 import { RiDeleteBin6Line } from "react-icons/ri";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+
+import * as client from "./client";
+import Navigation from "./Navigation";
+import { deleteQuestion, setQuestion } from "./reducer";
 
 export default function QuestionEditor() {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const { cid, qid } = useParams();
   const dispatch = useDispatch();
-  const questions = useSelector((state: any) =>
-    state.questionReducer ? state.questionReducer.questions : []
+
+  const questions = useSelector(
+    (state: any) => state.questionReducer?.questions || []
   );
-  console.log("questions", questions);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const fetchedQuestions = await client.fetchQuizQuestions(qid);
-        console.log("Fetched Questions:", fetchedQuestions);
-        console.log(questions);
         dispatch(setQuestion(fetchedQuestions));
       } catch (error) {
         console.error("Error fetching quiz questions:", error);
@@ -40,10 +32,12 @@ export default function QuestionEditor() {
     fetchData();
   }, [dispatch, qid]);
 
+  // Handle edit question navigation
   const handleEditQuestion = (questionId: string) => {
     navigate(`/Kanbas/Courses/${cid}/Quizzes/${qid}/edit/${questionId}`);
   };
 
+  // Handle delete question
   const handleDeleteQuestion = async (questionId: string) => {
     if (window.confirm("Are you sure you want to delete this question?")) {
       try {
@@ -61,9 +55,12 @@ export default function QuestionEditor() {
 
   return (
     <div id="wd-question-editor" className="p-4">
+      {/* Navigation */}
       <div id="wd-quiz-editor" className="p-4">
         <Navigation pathname={pathname} />
       </div>
+
+      {/* Question List */}
       <div>
         {questions.length === 0 ? (
           <p>No questions available.</p>
@@ -73,6 +70,7 @@ export default function QuestionEditor() {
               key={question._id}
               className="question-container mb-4 border rounded shadow-sm"
             >
+              {/* Question Header */}
               <div className="d-flex justify-content-between align-items-center p-2 bg-light border-bottom">
                 <div className="d-flex align-items-center">
                   <BsGripVertical
@@ -88,6 +86,8 @@ export default function QuestionEditor() {
                   <b>{question.points} pts</b>
                 </span>
               </div>
+
+              {/* Question Content */}
               <div className="d-flex justify-content-between align-items-center p-2">
                 <div
                   className="question-text mb-0 p-2"
@@ -113,6 +113,8 @@ export default function QuestionEditor() {
           ))
         )}
       </div>
+
+      {/* Add New Question */}
       <div className="d-flex justify-content-center mb-4">
         <button
           id="question-button"
@@ -124,7 +126,10 @@ export default function QuestionEditor() {
           New Question
         </button>
       </div>
+
       <hr />
+
+      {/* Action Buttons */}
       <div className="d-flex justify-content-start mb-4">
         <Link to={`/Kanbas/Courses/${cid}/Quizzes`}>
           <button type="button" className="btn btn-light border me-2 ms-5">

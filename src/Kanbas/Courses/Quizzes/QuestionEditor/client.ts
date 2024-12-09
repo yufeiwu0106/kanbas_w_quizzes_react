@@ -1,5 +1,9 @@
 import axios from "axios";
+
+// Constants
 const REMOTE_SERVER = process.env.REACT_APP_REMOTE_SERVER;
+
+// Fetch quiz questions by quiz ID
 export const fetchQuizQuestions = async (qid: any) => {
   try {
     const response = await axios.get(
@@ -12,6 +16,7 @@ export const fetchQuizQuestions = async (qid: any) => {
   }
 };
 
+// Add a new quiz question
 export const addNeWQuizQuestion = async (qid: any, question: any) => {
   try {
     const response = await axios.post(`${REMOTE_SERVER}/api/questions`, {
@@ -25,19 +30,21 @@ export const addNeWQuizQuestion = async (qid: any, question: any) => {
   }
 };
 
+// Update a quiz question
 export const updateQuizQuestion = async (questionId: string, question: any) => {
   try {
     const response = await axios.put(
       `${REMOTE_SERVER}/api/questions/${questionId}`,
       question
     );
-    return question;
+    return question; // Note: returning `question` instead of `response.data`
   } catch (error) {
     console.error("Error updating quiz question:", error);
     throw error;
   }
 };
 
+// Delete a quiz question by question ID
 export const deleteQuizQuestionsByQuestionID = async (questionID: any) => {
   try {
     const response = await axios.delete(
@@ -50,6 +57,7 @@ export const deleteQuizQuestionsByQuestionID = async (questionID: any) => {
   }
 };
 
+// Delete a question (redundant but kept as per provided code)
 export const deleteQuestion = async (questionId: string) => {
   try {
     const response = await axios.delete(
