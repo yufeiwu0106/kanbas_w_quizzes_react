@@ -4,6 +4,7 @@ const axiosWithCredentials = axios.create({ withCredentials: true });
 const REMOTE_SERVER = process.env.REACT_APP_REMOTE_SERVER;
 const COURSES_API = `${REMOTE_SERVER}/api/courses`;
 const QUIZZES_API = `${REMOTE_SERVER}/api/quizzes`;
+const RECORDS_API = `${REMOTE_SERVER}/api/records`;
 
 export const findQuizzesForCourse = async (courseId: string) => {
   const response = await axiosWithCredentials.get(
@@ -72,7 +73,7 @@ export const findLastRecordForQuizAndUser = async (
   try {
     // Send a GET request to the backend API to fetch the last record
     const response = await axios.get(
-      `/api/records/quiz/${quizId}/user/${userId}/last`
+      `${RECORDS_API}/quiz/${quizId}/user/${userId}/last`
     );
 
     // Return the data (most recent record)
@@ -83,3 +84,15 @@ export const findLastRecordForQuizAndUser = async (
     throw new Error("Failed to fetch the last record.");
   }
 };
+
+// Function to submit a quiz
+export const submitQuiz = async (quizId: string, userId: string, record: any) => {
+  console.log("API URL:", `${RECORDS_API}`);
+  console.log("Submitting quiz with record:", record);
+  const response = await axiosWithCredentials.post(
+    `${RECORDS_API}`,
+    record
+  );
+  return response.data;
+};
+

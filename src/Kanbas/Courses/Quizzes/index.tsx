@@ -53,6 +53,7 @@ function Quizzes() {
                 quiz._id,
                 currentUser._id
               );
+              console.log("Last record:", lastRecord);
               return { quizId: quiz._id, lastRecord };
             } catch (error) {
               console.error(
