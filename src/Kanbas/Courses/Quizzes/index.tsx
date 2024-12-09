@@ -20,9 +20,13 @@ function Quizzes() {
   const dispatch = useDispatch();
   const { currentUser } = useSelector((state: any) => state.accountReducer);
   const { cid } = useParams();
+  type LastRecords = {
+    [quizId: string]: any;
+  };
 
   // const quizzes = quizzesData;
   const [quizzes, setQuizzesState] = useState<any[]>([]);
+  const [lastRecords, setLastRecords] = useState<LastRecords>({}); // To store last record per quiz
 
   const fetchQuizzes = async () => {
     if (!cid) return;
@@ -39,6 +43,41 @@ function Quizzes() {
       );
       setQuizzesState(quizzesWithQuestionCount);
       dispatch(setQuizzes(quizzesWithQuestionCount));
+
+      // If the user is a student, fetch the last record for each quiz
+      if (currentUser.role === "STUDENT") {
+        const records = await Promise.all(
+          quizzesData.map(async (quiz: any) => {
+            try {
+              const lastRecord = await quizClient.findLastRecordForQuizAndUser(
+                quiz._id,
+                currentUser._id
+              );
+              return { quizId: quiz._id, lastRecord };
+            } catch (error) {
+              console.error(
+                `Failed to fetch last record for quiz ${quiz._id}:`,
+                error
+              );
+              return { quizId: quiz._id, lastRecord: null };
+            }
+          })
+        );
+
+        // Map the records to an object with quizId as the key
+        const recordsMap = records.reduce(
+          (
+            acc: Record<string, (typeof records)[0]["lastRecord"]>,
+            { quizId, lastRecord }
+          ) => {
+            acc[quizId] = lastRecord;
+            return acc;
+          },
+          {}
+        );
+
+        setLastRecords(recordsMap);
+      }
     } catch (error) {
       console.error("Error fetching quizzes for course:", error);
     }
@@ -158,6 +197,18 @@ function Quizzes() {
                               <>
                                 <b> | Score:</b>
                                 {/* Add the score logic or value here */}
+                              </>
+                            )}
+                            {currentUser.role === "STUDENT" && (
+                              <>
+                                <b> | Score:</b>
+                                {lastRecords[quiz._id] ? (
+                                  // If a record exists for the quiz, display the score
+                                  <span>{lastRecords[quiz._id]?.score}</span>
+                                ) : (
+                                  // If the record explicitly does not exist (null), show "No record found"
+                                  <span>No record found</span>
+                                )}
                               </>
                             )}
                           </span>
