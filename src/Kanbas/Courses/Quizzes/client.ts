@@ -48,3 +48,38 @@ export const deleteQuiz = async (quizId: string) => {
   );
   return response.data;
 };
+
+export const findRecordsForQuizAndUser = async (
+  quizId: string,
+  userId: string
+) => {
+  try {
+    // Construct the API endpoint URL with quizId and userId
+    const response = await axiosWithCredentials.get(
+      `${REMOTE_SERVER}/api/records/quiz/${quizId}/user/${userId}`
+    );
+    return response.data; // Return the records data from the backend
+  } catch (error) {
+    console.error("Error fetching records for quiz and user:", error);
+  }
+};
+
+// Function to fetch the last record for a specific quiz and user
+export const findLastRecordForQuizAndUser = async (
+  quizId: string,
+  userId: string
+) => {
+  try {
+    // Send a GET request to the backend API to fetch the last record
+    const response = await axios.get(
+      `/api/records/quiz/${quizId}/user/${userId}/last`
+    );
+
+    // Return the data (most recent record)
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching the last record for quiz and user:", error);
+    // Optionally handle errors like showing a message to the user
+    throw new Error("Failed to fetch the last record.");
+  }
+};

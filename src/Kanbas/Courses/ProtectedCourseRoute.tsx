@@ -12,8 +12,8 @@ export default function ProtectedRoute({
   children: any;
 }) {
   const { currentUser } = useSelector((state: any) => state.accountReducer);
-  const isFaculty = currentUser.role == "FACULTY";
-  const isAdmin = currentUser.role == "ADMIN";
+  const isFaculty = currentUser.role === "FACULTY";
+  const isAdmin = currentUser.role === "ADMIN";
 
   const { enrollments } = useSelector(
     (state: { enrollmentsReducer: { enrollments: any[] } }) =>
@@ -26,8 +26,8 @@ export default function ProtectedRoute({
 
   const enrollmentObj = enrollments.find(
     (enrollment) =>
-      enrollment.user === currentUser._id &&
-      enrollment.course === course._id
+      enrollment.user._id === currentUser._id &&
+      enrollment.course._id === course._id
   );
 
   console.log("isFaculty", isFaculty);
