@@ -130,7 +130,7 @@ const QuizTaker = ({ onSubmit }: { onSubmit?: (score: number) => void }) => {
                     <label>
                       <input
                         type="radio"
-                        name={`question-${index}`}
+                        name={`question-${question._id}`}
                         value={option.text}
                         onChange={() =>
                           handleAnswerChange(question._id, option.text)
