@@ -192,13 +192,7 @@ function Quizzes() {
                             <b> | Points:</b> {quiz.point} pts
                             {/* Number of questions*/}
                             <b> | {quiz.questionCount} </b>Questions
-                            {/* to do: Score if the current user is a student,*/}
-                            {currentUser.role === "STUDENT" && (
-                              <>
-                                <b> | Score:</b>
-                                {/* Add the score logic or value here */}
-                              </>
-                            )}
+                            {/* Score if the current user is a student,*/}
                             {currentUser.role === "STUDENT" && (
                               <>
                                 <b> | Score:</b>
