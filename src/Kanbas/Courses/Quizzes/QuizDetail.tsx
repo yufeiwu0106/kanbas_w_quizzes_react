@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { findQuestionsForQuiz } from "./client";
+import * as quizClient from "./client";
 
 const QuizDetail = () => {
   const { cid, qid: quizId } = useParams();
@@ -11,7 +12,10 @@ const QuizDetail = () => {
   const { quizzes } = useSelector((state: any) => state.quizzesReducer); // Get quizzes from Redux store
 
   const [questions, setQuestions] = useState([]);
-  const quiz = quizzes.find((q: any) => q._id === quizId);
+
+  const quiz = quizzes.find((q: any) => q._id === quizId) || null;
+  const [isNewQuiz, setIsNewQuiz] = useState(false);
+
   const formatDate = (date: string | undefined): string => {
     if (!date) return "Not specified";
     return new Date(date).toLocaleString("en-US", {
@@ -23,6 +27,10 @@ const QuizDetail = () => {
     });
   };
   useEffect(() => {
+    if (quizId === "NewQuiz") {
+      setIsNewQuiz(true);
+      return;
+    }
     const fetchQuestions = async () => {
       if (quizId) {
         // 确保 quizId 不为 undefined
@@ -186,15 +194,29 @@ const QuizDetail = () => {
             </button>
           </>
         ) : (
-          /* Start Quiz Button for Students */
-          <button
-            className="btn btn-success"
-            onClick={() =>
-              navigate(`/Kanbas/Courses/${cid}/Quizzes/${quizId}/Take`)
-            }
-          >
-            Start Quiz
-          </button>
+          <>
+            {/* Start Quiz Button for Students */}
+            <button
+              className="btn btn-success"
+              onClick={() =>
+                navigate(`/Kanbas/Courses/${cid}/Quizzes/${quizId}/Take`)
+              }
+            >
+              Start Quiz
+            </button>
+            {/* add some space between the buttons */}
+            <div className="mt-2"></div>
+
+            {/* Button to get last record */}
+            <button
+              className="btn btn-info"
+              onClick={() =>
+                navigate(`/Kanbas/Courses/${cid}/Quizzes/${quizId}/LastRecord`)
+              }
+            >
+              Get Last Record
+            </button>
+          </>
         )}
       </div>
     </div>

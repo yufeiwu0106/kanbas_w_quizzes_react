@@ -7,8 +7,8 @@ export default function QuizController({ cid }: { cid: any }) {
 
   const navigate = useNavigate();
   const addQuiz = () => {
-    // TODO: Add quiz
-    navigate(`/Kanbas/Courses/${cid}/Quizzes/New%20Quiz`);
+    // Add quiz
+    navigate(`/Kanbas/Courses/${cid}/Quizzes/NewQuiz`);
   };
 
   if (currentUser.role != "FACULTY") {

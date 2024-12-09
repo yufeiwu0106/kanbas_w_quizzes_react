@@ -20,11 +20,12 @@ export default function Kanbas() {
   const [enrolling, setEnrolling] = useState<boolean>(false);
 
   const [course, setCourse] = useState<any>({
-    _id: "0",
+    _id: "1234",
     name: "New Course",
     number: "New Number",
     startDate: "2023-09-10",
     endDate: "2023-12-15",
+    image: "/images/reactjs.jpg",
     description: "New Description",
   });
 
@@ -33,11 +34,11 @@ export default function Kanbas() {
 
   const findCoursesForUser = async () => {
     try {
-      console.error("currentUser", currentUser);
+      // console.error("currentUser", currentUser);
       const courses = await userClient.findCoursesForUser(currentUser._id);
       setCourses(courses);
     } catch (error) {
-      console.error(error);
+      console.log(error);
     }
   };
 
@@ -64,11 +65,11 @@ export default function Kanbas() {
       const enrolledCourses = await userClient.findCoursesForUser(
         currentUser._id
       );
-      const courses = allCourses.map((course: any) => {
-        if (enrolledCourses.find((c: any) => c._id === course._id)) {
-          return { ...course, enrolled: true };
+      const courses = allCourses.map((theCourse: any) => {
+        if (enrolledCourses.find((c: any) => c._id === theCourse._id)) {
+          return { ...theCourse, enrolled: true };
         } else {
-          return course;
+          return theCourse;
         }
       });
       setCourses(courses);

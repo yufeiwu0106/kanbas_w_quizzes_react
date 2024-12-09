@@ -8,29 +8,77 @@ import { BsGripVertical } from "react-icons/bs";
 import { AiFillCaretDown } from "react-icons/ai";
 import { BiDotsVerticalRounded } from "react-icons/bi";
 import { GiNotebook } from "react-icons/gi";
-import { useDispatch } from "react-redux";
+import { RxRocket } from "react-icons/rx";
+import { useDispatch, useSelector } from "react-redux";
 import QuizController from "./QuizController";
 import ContextMenu from "./ContextMenu";
 import { setQuizzes } from "./reducer";
 import { findQuizzesForCourse } from "./client";
-
+import * as quizClient from "./client";
 
 function Quizzes() {
   const dispatch = useDispatch();
-
+  const { currentUser } = useSelector((state: any) => state.accountReducer);
   const { cid } = useParams();
-
+  type LastRecords = {
+    [quizId: string]: any;
+  };
 
   // const quizzes = quizzesData;
   const [quizzes, setQuizzesState] = useState<any[]>([]);
+  const [lastRecords, setLastRecords] = useState<LastRecords>({}); // To store last record per quiz
 
   const fetchQuizzes = async () => {
-    if (!cid) return; 
+    if (!cid) return;
     try {
-      const quizzesData = await findQuizzesForCourse(cid); // 调用 API 获取数据
-      console.log("Fetched quizzes: ", quizzesData); 
-      setQuizzesState(quizzesData); 
-      dispatch(setQuizzes(quizzesData)); 
+      const quizzesData = await quizClient.findQuizzesForCourse(cid); // Fetch quizzes data from API
+      console.log("Fetched quizzes: ", quizzesData);
+
+      // Fetch questions for each quiz and set the question count
+      const quizzesWithQuestionCount = await Promise.all(
+        quizzesData.map(async (quiz: any) => {
+          const questions = await quizClient.findQuestionsForQuiz(quiz._id);
+          return { ...quiz, questionCount: questions.length };
+        })
+      );
+      setQuizzesState(quizzesWithQuestionCount);
+      dispatch(setQuizzes(quizzesWithQuestionCount));
+
+      // If the user is a student, fetch the last record for each quiz
+      if (currentUser.role === "STUDENT") {
+        const records = await Promise.all(
+          quizzesData.map(async (quiz: any) => {
+            try {
+              const lastRecord = await quizClient.findLastRecordForQuizAndUser(
+                quiz._id,
+                currentUser._id
+              );
+              console.log("Last record:", lastRecord);
+              return { quizId: quiz._id, lastRecord };
+            } catch (error) {
+              console.error(
+                `Failed to fetch last record for quiz ${quiz._id}:`,
+                error
+              );
+              return { quizId: quiz._id, lastRecord: null };
+            }
+          })
+        );
+
+        // Map the records to an object with quizId as the key
+        const recordsMap = records.reduce(
+          (
+            acc: Record<string, (typeof records)[0]["lastRecord"]>,
+            { quizId, lastRecord }
+          ) => {
+            acc[quizId] = lastRecord;
+            return acc;
+          },
+          {}
+        );
+
+        setLastRecords(recordsMap);
+      }
     } catch (error) {
       console.error("Error fetching quizzes for course:", error);
     }
@@ -42,17 +90,36 @@ function Quizzes() {
       year: "numeric",
       month: "long",
       day: "numeric",
-    }); 
+    });
   };
-
-
-  
 
   useEffect(() => {
     fetchQuizzes();
   }, [cid]);
 
+  // Delete quiz
+  const deleteQuiz = async (quizId: string) => {
+    const status = await quizClient.deleteQuiz(quizId);
+    setQuizzesState(quizzes.filter((quiz) => quiz._id !== quizId));
+    fetchQuizzes();
+  };
 
+  const getAvailabilityStatus = (
+    availableDate: string,
+    availableUntilDate: string
+  ) => {
+    const now = new Date();
+    const availableFrom = new Date(availableDate);
+    const availableUntil = new Date(availableUntilDate);
+
+    if (now < availableFrom) {
+      return `Not available until ${formatDate(availableDate)}`;
+    } else if (now > availableUntil) {
+      return "Closed";
+    } else {
+      return "Available";
+    }
+  };
 
   return (
     <div>
@@ -75,12 +142,11 @@ function Quizzes() {
         <QuizController cid={cid} />
       </div>
 
-      {/* Assignment */}
+      {/* Assignment QUIZZES*/}
       <ul id="wd-assignment-list" className="list-group rounded-0">
         <li className="list-group-item p-1 mb-3 fs-5 border-grey">
           <div className="wd-title p-3 ps-2 bg-secondary text-black">
-            <BsGripVertical className="me-2 fs-3" />
-            <AiFillCaretDown /> QUIZ
+            <AiFillCaretDown /> ASSIGNMENT QUIZZES
             <BiDotsVerticalRounded className="float-end mt-2" />
             <AiOutlinePlus className="float-end mt-2" />
             <button
@@ -102,8 +168,7 @@ function Quizzes() {
                   >
                     <div className="d-flex justify-content-between align-items-center">
                       <div className="d-flex align-items-center">
-                        <BsGripVertical className="me-2 fs-3" />
-                        <GiNotebook className="me-2 fs-3" />
+                        <RxRocket className="ms-2 me-4 fs-4 text-success" />
                         <div>
                           <a
                             className="wd-assignment-link"
@@ -118,13 +183,38 @@ function Quizzes() {
                           </a>
                           <br />
                           <span className="text-black">
-                          <b>Available:</b> {formatDate(quiz.availableDate)}
-                    <b> | Due:</b> {formatDate(quiz.dueDate)} 
-                    <b> | Points:</b> {quiz.point} pts 
+                            <b>
+                              {getAvailabilityStatus(
+                                quiz.availableDate,
+                                quiz.dueDate
+                              )}
+                            </b>
+                            <b> | Due:</b> {formatDate(quiz.dueDate)}
+                            <b> | Points:</b> {quiz.point} pts
+                            {/* Number of questions*/}
+                            <b> | {quiz.questionCount} </b>Questions
+                            {/* Score if the current user is a student,*/}
+                            {currentUser.role === "STUDENT" && (
+                              <>
+                                <b> | Score:</b>
+                                {lastRecords[quiz._id] ? (
+                                  // If a record exists for the quiz, display the score
+                                  <span>{lastRecords[quiz._id]?.score}</span>
+                                ) : (
+                                  // If the record explicitly does not exist (null), show "No record found"
+                                  <span>No record found</span>
+                                )}
+                              </>
+                            )}
                           </span>
                         </div>
                       </div>
-                      <ContextMenu quizId={quiz._id} />
+                      <div style={{ position: "relative", right: "2rem" }}>
+                        <ContextMenu
+                          quizId={quiz._id}
+                          deleteQuiz={deleteQuiz}
+                        />
+                      </div>
                     </div>
                   </li>
                 )
