@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { findQuestionsForQuiz } from "./client";
 import { useSelector } from "react-redux";
-import axios from "axios";
+import { submitQuiz } from "./client";
 
 const QuizTaker = ({ onSubmit }: { onSubmit?: (score: number) => void }) => {
   const { cid, qid } = useParams();
@@ -65,7 +65,8 @@ const QuizTaker = ({ onSubmit }: { onSubmit?: (score: number) => void }) => {
         score: totalScore,
         attemptTime: new Date().toISOString(),
       };
-      await axios.post("/api/records", record);
+
+      await submitQuiz(qid || "", currentUser._id, record);
       if (onSubmit) {
         onSubmit(totalScore);
       } else {
@@ -129,7 +130,7 @@ const QuizTaker = ({ onSubmit }: { onSubmit?: (score: number) => void }) => {
                     <label>
                       <input
                         type="radio"
-                        name={`question-${index}`}
+                        name={`question-${question._id}`}
                         value={option.text}
                         onChange={() =>
                           handleAnswerChange(question._id, option.text)

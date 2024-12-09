@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import QuizTaker from "./QuizTaker";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import * as client from "./QuestionEditor/client";
 import {
@@ -11,9 +11,11 @@ import {
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { MdEdit } from "react-icons/md";
 import Editor from "react-simple-wysiwyg";
+import Navigation from "./QuestionEditor/Navigation";
 
 const QuizPreview = () => {
   const { cid, qid: quizId } = useParams();
+  const { pathname } = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { currentUser } = useSelector((state: any) => state.accountReducer);
@@ -123,33 +125,16 @@ const QuizPreview = () => {
 
   return (
     <div className="container mt-4">
-      <h1 className="mb-4">Quiz Preview</h1>
+      <div id="wd-quiz-editor" className="mb-4">
+        <Navigation pathname={pathname} />
+      </div>
       <QuizTaker />
 
       {isFaculty && (
         <div className="mt-5">
           <div className="row">
             {/* Left side buttons */}
-            <div className="col-6">
-              <div className="d-flex flex-column gap-2">
-                <button
-                  className="btn btn-success w-75"
-                  onClick={() =>
-                    navigate(`/Kanbas/Courses/${cid}/Quizzes/${quizId}/Submit`)
-                  }
-                >
-                  Submit Quiz
-                </button>
-                <button
-                  className="btn btn-primary w-75"
-                  onClick={() =>
-                    navigate(`/Kanbas/Courses/${cid}/Quizzes/${quizId}/Editor`)
-                  }
-                >
-                  Edit Quiz
-                </button>
-              </div>
-            </div>
+            <div className="col-6"></div>
 
             {/* Right side buttons */}
             <div className="col-6">

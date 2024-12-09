@@ -1,18 +1,23 @@
 import React from "react";
+import { GrEdit } from "react-icons/gr";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import Editor from "react-simple-wysiwyg";
-import { GrEdit } from "react-icons/gr";
+
+interface Choice {
+  text: string;
+  isCorrect: boolean;
+}
 
 interface MultipleChoiceEditorProps {
   currQuestion: any;
   setCurrQuestion: React.Dispatch<React.SetStateAction<any>>;
-  choices: string[];
-  setChoices: React.Dispatch<React.SetStateAction<string[]>>;
+  choices: Choice[];
+  setChoices: React.Dispatch<React.SetStateAction<Choice[]>>;
   handleChoicesChange: (
     index: number,
     event: React.ChangeEvent<HTMLInputElement>
   ) => void;
-  handleCorrectAnswerChange: (choice: string, isCorrect: boolean) => void;
+  handleCorrectAnswerChange: (choice: string) => void;
   handleAddChoice: () => void;
   handleDeleteChoice: (index: number) => void;
   selectedChoiceIndex: number | null;
@@ -23,7 +28,6 @@ const MultipleChoiceEditor: React.FC<MultipleChoiceEditorProps> = ({
   currQuestion,
   setCurrQuestion,
   choices,
-  setChoices,
   handleChoicesChange,
   handleCorrectAnswerChange,
   handleAddChoice,
@@ -34,7 +38,8 @@ const MultipleChoiceEditor: React.FC<MultipleChoiceEditorProps> = ({
   <>
     <hr />
     <p style={{ fontSize: "0.9rem" }}>
-      Enter your question and multiple answers, then select the correct answers.
+      Enter your question and multiple answers, then select the one correct
+      answer.
     </p>
     <label htmlFor="questionDesc">
       <b>Question:</b>
@@ -57,18 +62,20 @@ const MultipleChoiceEditor: React.FC<MultipleChoiceEditorProps> = ({
         onClick={() => setSelectedChoiceIndex(index)}
         style={{ cursor: "pointer" }}
       >
-        <input
-          type="checkbox"
-          checked={currQuestion.options?.some(
-            (opt: any) => opt.text === choice && opt.isCorrect
-          )}
-          onChange={(e) => handleCorrectAnswerChange(choice, e.target.checked)}
-          className="me-2"
-        />
+        <div className="me-2">
+          <input
+            type="radio"
+            id={`MC${index + 1}`}
+            name="correctAnswer"
+            checked={choice.isCorrect}
+            onChange={() => handleCorrectAnswerChange(choice.text)}
+            className="form-check-input"
+          />
+        </div>
         <input
           type="text"
           id={`option${index + 1}`}
-          value={choice}
+          value={choice.text}
           className="form-control flex-fill"
           onChange={(e) => handleChoicesChange(index, e)}
           placeholder={`Option ${index + 1}`}
@@ -76,16 +83,13 @@ const MultipleChoiceEditor: React.FC<MultipleChoiceEditorProps> = ({
         {selectedChoiceIndex === index && (
           <div className="d-flex ms-2">
             <button className="btn p-0">
-              <GrEdit />
+              <GrEdit style={{ marginLeft: "4px" }} />
             </button>
             <button
               className="btn p-0 ms-2"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleDeleteChoice(index);
-              }}
+              onClick={() => handleDeleteChoice(index)}
             >
-              <RiDeleteBin6Line />
+              <RiDeleteBin6Line style={{ marginLeft: "-4px" }} />
             </button>
           </div>
         )}
