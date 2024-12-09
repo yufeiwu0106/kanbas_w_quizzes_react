@@ -54,7 +54,6 @@ const QuizDetail = () => {
   return (
     <div className="container mt-4">
       <div id="wd-quiz-editor" className="mb-4">
-        <Navigation pathname={pathname} />
       </div>
 
       <div className="row mb-2">
