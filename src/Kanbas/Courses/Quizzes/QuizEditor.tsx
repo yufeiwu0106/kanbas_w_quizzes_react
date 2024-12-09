@@ -3,6 +3,13 @@ import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import * as quizClient from "./client";
+import {
+  BtnBold,
+  BtnItalic,
+  Editor,
+  EditorProvider,
+  Toolbar,
+} from "react-simple-wysiwyg";
 
 export default function QuizEditor() {
   const { cid, qid } = useParams();
@@ -24,6 +31,7 @@ export default function QuizEditor() {
         title: "Untitled",
         type: "Graded Quiz",
         point: "100",
+        description: "",
         status: "Unpublished",
         assignmentGroup: "Quizzes",
         dueDate: "",
@@ -44,11 +52,12 @@ export default function QuizEditor() {
         title: quiz?.title || "Untitled",
         type: quiz?.type || "Graded Quiz",
         point: quiz?.point || "100",
+        description: quiz?.description || "",
         status: quiz?.status || "Unpublished",
         assignmentGroup: quiz?.assignmentGroup || "Quizzes",
-        dueDate: quiz?.dueDate || "",
-        availableDate: quiz?.availableDate || "",
-        untilDate: quiz?.untilDate || "",
+        dueDate: quiz?.dueDate.slice(0, 16) || "",
+        availableDate: quiz?.availableDate.slice(0, 16) || "",
+        untilDate: quiz?.untilDate.slice(0, 16) || "",
         shuffleAnswer: quiz?.shuffleAnswer || "Yes",
         timeLimit: quiz?.timeLimit || "20",
         multipleAttempts: quiz?.multipleAttempts || "No",
@@ -162,6 +171,24 @@ export default function QuizEditor() {
           />
         </div>
       </div>
+      {/* <div className="mb-3"> */}
+      <EditorProvider>
+        <Editor
+          value={quizData.description}
+          onChange={(e) => {
+            setQuizData((prevData) => ({
+              ...prevData,
+              description: e.target.value,
+            }));
+          }}
+        >
+          <Toolbar>
+            <BtnBold />
+            <BtnItalic />
+          </Toolbar>
+        </Editor>
+      </EditorProvider>
+      {/* </div> */}
 
       {/* Quiz Type with value from quiz.type */}
       <div className="mb-3 row">
