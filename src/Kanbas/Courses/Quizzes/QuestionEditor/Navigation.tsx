@@ -10,7 +10,7 @@ export default function Navigation({ pathname }: { pathname: string }) {
 
   const handleDetailsClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    navigate(`/Kanbas/Courses/${cid}/Quizzes/${qid}`);
+    navigate(`/Kanbas/Courses/${cid}/Quizzes/${qid}/Editor`);
   };
 
   const handleQuestionsClick = (e: React.MouseEvent) => {

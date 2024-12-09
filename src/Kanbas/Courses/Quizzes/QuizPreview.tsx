@@ -134,26 +134,7 @@ const QuizPreview = () => {
         <div className="mt-5">
           <div className="row">
             {/* Left side buttons */}
-            <div className="col-6">
-              <div className="d-flex flex-column gap-2">
-                <button
-                  className="btn btn-success w-75"
-                  onClick={() =>
-                    navigate(`/Kanbas/Courses/${cid}/Quizzes/${quizId}/Submit`)
-                  }
-                >
-                  Submit Quiz
-                </button>
-                <button
-                  className="btn btn-primary w-75"
-                  onClick={() =>
-                    navigate(`/Kanbas/Courses/${cid}/Quizzes/${quizId}/Editor`)
-                  }
-                >
-                  Edit Quiz
-                </button>
-              </div>
-            </div>
+            <div className="col-6"></div>
 
             {/* Right side buttons */}
             <div className="col-6">
