@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { findQuestionsForQuiz } from "./client";
 import * as quizClient from "./client";
 import Navigation from "./QuestionEditor/Navigation";
+import ProtectedStartQuizRoute from "./ProtectedStartQuizRoute";
 
 const QuizDetail = () => {
   const { cid, qid: quizId } = useParams();
@@ -53,8 +54,7 @@ const QuizDetail = () => {
 
   return (
     <div className="container mt-4">
-      <div id="wd-quiz-editor" className="mb-4">
-      </div>
+      <div id="wd-quiz-editor" className="mb-4"></div>
 
       <div className="row mb-2">
         <label className="col-sm-3 col-form-label">
@@ -198,15 +198,17 @@ const QuizDetail = () => {
           </>
         ) : (
           <>
-            {/* Start Quiz Button for Students */}
-            <button
-              className="btn btn-success"
-              onClick={() =>
-                navigate(`/Kanbas/Courses/${cid}/Quizzes/${quizId}/Take`)
-              }
-            >
-              Start Quiz
-            </button>
+            <ProtectedStartQuizRoute quiz={quiz}>
+              {/* Start Quiz Button for Students */}
+              <button
+                className="btn btn-success"
+                onClick={() =>
+                  navigate(`/Kanbas/Courses/${cid}/Quizzes/${quizId}/Take`)
+                }
+              >
+                Start Quiz
+              </button>
+            </ProtectedStartQuizRoute>
             {/* add some space between the buttons */}
             <div className="mt-2"></div>
 
