@@ -42,7 +42,7 @@ function Quizzes() {
         })
       );
       setQuizzesState(quizzesWithQuestionCount);
-      dispatch(setQuizzes(quizzesWithQuestionCount));
+      dispatch(setQuizzes(quizzesData));
 
       // If the user is a student, fetch the last record for each quiz
       if (currentUser.role === "STUDENT") {
