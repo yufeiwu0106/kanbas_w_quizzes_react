@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import * as quizClient from "./client";
@@ -167,7 +167,7 @@ export default function QuizEditor() {
             id="wd-name"
             className="form-control"
             onChange={(e) => {
-              setQuizData((prevData) => ({
+              setQuizData((prevData: any) => ({
                 ...prevData,
                 title: e.target.value,
               }));
@@ -182,7 +182,7 @@ export default function QuizEditor() {
         <Editor
           value={quizData.description}
           onChange={(e) => {
-            setQuizData((prevData) => ({
+            setQuizData((prevData: any) => ({
               ...prevData,
               description: e.target.value,
             }));
@@ -206,7 +206,7 @@ export default function QuizEditor() {
             id="wd-quiz-type"
             className="form-select"
             onChange={(e) => {
-              setQuizData((prevData) => ({
+              setQuizData((prevData: any) => ({
                 ...prevData,
                 type: e.target.value,
               }));
@@ -232,7 +232,7 @@ export default function QuizEditor() {
             id="wd-name"
             className="form-control"
             onChange={(e) => {
-              setQuizData((prevData) => ({
+              setQuizData((prevData: any) => ({
                 ...prevData,
                 point: e.target.value,
               }));
@@ -253,7 +253,7 @@ export default function QuizEditor() {
             id="wd-name"
             className="form-control"
             onChange={(e) => {
-              setQuizData((prevData) => ({
+              setQuizData((prevData: any) => ({
                 ...prevData,
                 assignmentGroup: e.target.value,
               }));
@@ -274,7 +274,7 @@ export default function QuizEditor() {
             id="wd-shuffle-answer"
             className="form-select"
             onChange={(e) => {
-              setQuizData((prevData) => ({
+              setQuizData((prevData: any) => ({
                 ...prevData,
                 shuffleAnswer: e.target.value,
               }));
@@ -298,7 +298,7 @@ export default function QuizEditor() {
             id="wd-name"
             className="form-control"
             onChange={(e) => {
-              setQuizData((prevData) => ({
+              setQuizData((prevData: any) => ({
                 ...prevData,
                 timeLimit: e.target.value,
               }));
@@ -319,7 +319,7 @@ export default function QuizEditor() {
             id="wd-multiple-attempts"
             className="form-select"
             onChange={(e) => {
-              setQuizData((prevData) => ({
+              setQuizData((prevData: any) => ({
                 ...prevData,
                 multipleAttempts: e.target.value,
               }));
@@ -343,7 +343,7 @@ export default function QuizEditor() {
             id="wd-name"
             className="form-control"
             onChange={(e) => {
-              setQuizData((prevData) => ({
+              setQuizData((prevData: any) => ({
                 ...prevData,
                 howManyAttempts: e.target.value,
               }));
@@ -364,7 +364,7 @@ export default function QuizEditor() {
             id="wd-name"
             className="form-control"
             onChange={(e) => {
-              setQuizData((prevData) => ({
+              setQuizData((prevData: any) => ({
                 ...prevData,
                 showCorrectAnswers: e.target.value,
               }));
@@ -385,7 +385,7 @@ export default function QuizEditor() {
             id="wd-name"
             className="form-control"
             onChange={(e) => {
-              setQuizData((prevData) => ({
+              setQuizData((prevData: any) => ({
                 ...prevData,
                 accessCode: e.target.value,
               }));
@@ -406,7 +406,7 @@ export default function QuizEditor() {
             id="wd-one-question"
             className="form-select"
             onChange={(e) => {
-              setQuizData((prevData) => ({
+              setQuizData((prevData: any) => ({
                 ...prevData,
                 oneQuestionAtATime: e.target.value,
               }));
@@ -430,7 +430,7 @@ export default function QuizEditor() {
             id="wd-webcam-required"
             className="form-select"
             onChange={(e) => {
-              setQuizData((prevData) => ({
+              setQuizData((prevData: any) => ({
                 ...prevData,
                 webcamRequired: e.target.value,
               }));
@@ -454,7 +454,7 @@ export default function QuizEditor() {
             id="wd-lock-questions"
             className="form-select"
             onChange={(e) => {
-              setQuizData((prevData) => ({
+              setQuizData((prevData: any) => ({
                 ...prevData,
                 lockQuestionsAfterAnswering: e.target.value,
               }));
@@ -479,7 +479,7 @@ export default function QuizEditor() {
           value={quizData.dueDate}
           className="form-control"
           onChange={(e) => {
-            setQuizData((prevData) => ({
+            setQuizData((prevData: any) => ({
               ...prevData,
               dueDate: e.target.value,
             }));
@@ -498,7 +498,7 @@ export default function QuizEditor() {
           className="form-control"
           value={quizData.availableDate}
           onChange={(e) => {
-            setQuizData((prevData) => ({
+            setQuizData((prevData: any) => ({
               ...prevData,
               availableDate: e.target.value,
             }));
@@ -518,7 +518,7 @@ export default function QuizEditor() {
           className="form-control"
           // Update state on change
           onChange={(e) => {
-            setQuizData((prevData) => ({
+            setQuizData((prevData: any) => ({
               ...prevData,
               untilDate: e.target.value,
             }));
