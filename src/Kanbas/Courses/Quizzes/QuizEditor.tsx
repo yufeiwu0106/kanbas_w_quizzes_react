@@ -1,8 +1,9 @@
-import { useSelector } from "react-redux";
-import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import * as quizClient from "./client";
+import { createQuiz, updateQuiz } from "./reducer"; // Import your action
 import {
   BtnBold,
   BtnItalic,
@@ -18,13 +19,15 @@ export default function QuizEditor() {
   const navigate = useNavigate();
   const isNewQuiz = qid === "NewQuiz";
   const { pathname } = useLocation();
-
+  // Inside handleSave or handleSaveAndPublish:
+  const dispatch = useDispatch();
   // get current user
   const { currentUser } = useSelector((state: any) => state.accountReducer);
   const isFaculty = currentUser.role === "FACULTY";
 
   // get quizzes
   const { quizzes } = useSelector((state: any) => state.quizzesReducer);
+
   const quiz = quizzes.find((q: any) => q._id === qid);
 
   // Define initial state for a new quiz or edit an existing quiz
@@ -89,7 +92,8 @@ export default function QuizEditor() {
           cid,
           newQuizData
         );
-
+        // Update Redux store after saving the quiz (Add the new quiz to the list)
+        dispatch(createQuiz(createdQuiz)); // use createQuiz to add to the store
         // Navigate to the details of the newly created quiz
         navigate(`/Kanbas/Courses/${cid}/Quizzes/${createdQuiz._id}`);
       } else {
@@ -100,6 +104,8 @@ export default function QuizEditor() {
 
         // Call the API to update the quiz
         await quizClient.updateQuiz(qid, updatedQuizData);
+        // Update Redux store after saving the updated quiz
+        dispatch(updateQuiz(updatedQuizData)); // Use updateQuiz to replace the existing one
 
         // Navigate to the details of the updated quiz
         navigate(`/Kanbas/Courses/${cid}/Quizzes/${qid}`);
@@ -125,6 +131,8 @@ export default function QuizEditor() {
           cid,
           newQuizData
         );
+        // Update Redux store after saving the quiz (Add the new quiz to the list)
+        dispatch(createQuiz(createdQuiz)); // use createQuiz to add to the store
       } else {
         // Logic for updating an existing quiz
         const updatedQuizData = {
@@ -135,7 +143,6 @@ export default function QuizEditor() {
         // Call the API to update the quiz
         await quizClient.updateQuiz(qid, updatedQuizData);
       }
-
       // After saving, navigate to the quiz list page
       navigate(`/Kanbas/Courses/${cid}/Quizzes`);
     } catch (error) {
@@ -177,7 +184,7 @@ export default function QuizEditor() {
           />
         </div>
       </div>
-      {/* <div className="mb-3"> */}
+      {/* Quiz descriptionpe with value from quiz.description*/}
       <EditorProvider>
         <Editor
           value={quizData.description}
@@ -194,7 +201,6 @@ export default function QuizEditor() {
           </Toolbar>
         </Editor>
       </EditorProvider>
-      {/* </div> */}
 
       {/* Quiz Type with value from quiz.type */}
       <div className="mb-3 row">
@@ -211,7 +217,7 @@ export default function QuizEditor() {
                 type: e.target.value,
               }));
             }}
-            value={quizData.type} // Default value for new quizzes
+            defaultValue={quizData.type} // Default value for new quizzes
             disabled={!isFaculty} // Make dropdown readonly for non-faculty users
           >
             <option value="Graded Quiz">Graded Quiz</option>
