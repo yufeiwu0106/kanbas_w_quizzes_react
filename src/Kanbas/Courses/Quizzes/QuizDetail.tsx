@@ -13,11 +13,31 @@ const QuizDetail = () => {
   const navigate = useNavigate();
   const { currentUser } = useSelector((state: any) => state.accountReducer);
   const { quizzes } = useSelector((state: any) => state.quizzesReducer); // Get quizzes from Redux store
-
   const [questions, setQuestions] = useState([]);
-
-  const quiz = quizzes.find((q: any) => q._id === quizId) || null;
   const [isNewQuiz, setIsNewQuiz] = useState(false);
+  const [quiz, setQuiz] = useState<any>(null);
+
+  // Function to fetch quiz data
+  const fetchQuiz = async (quizId: string) => {
+    try {
+      const curQuiz = await quizClient.findQuizById(quizId); // API call to fetch quiz details
+      if (!curQuiz) {
+        setQuiz(null); // If no quiz is found, set to null
+      } else {
+        setQuiz(curQuiz); // Update state with fetched quiz
+      }
+    } catch (error) {
+      console.error("Error fetching quiz:", error); // Log the error for debugging
+      setQuiz(null); // Set to null in case of an error
+    }
+  };
+
+  // UseEffect to fetch the quiz whenever quizId or quizzes change
+  useEffect(() => {
+    if (quizId) {
+      fetchQuiz(quizId); // Ensure quizId is passed correctly
+    }
+  }, [quizId, quizzes]); // Ensure it runs when either quizId or quizzes change
 
   const formatDate = (date: string | undefined): string => {
     if (!date) return "Not specified";
