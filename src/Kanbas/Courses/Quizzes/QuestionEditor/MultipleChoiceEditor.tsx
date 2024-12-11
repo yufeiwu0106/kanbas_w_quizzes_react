@@ -18,7 +18,7 @@ interface MultipleChoiceEditorProps {
     index: number,
     event: React.ChangeEvent<HTMLInputElement>
   ) => void;
-  handleCorrectAnswerChange: (choice: string) => void;
+  handleCorrectAnswerChange: (index: number) => void;
   handleAddChoice: () => void;
   handleDeleteChoice: (index: number) => void;
   selectedChoiceIndex: number | null;
@@ -69,12 +69,10 @@ const MultipleChoiceEditor: React.FC<MultipleChoiceEditorProps> = ({
           className="me-2 d-flex align-items-center"
           onClick={(e) => {
             e.stopPropagation();
-            if (choice.text.trim() !== "") {
-              handleCorrectAnswerChange(choice.text);
-            }
+            handleCorrectAnswerChange(index);
           }}
           style={{
-            cursor: choice.text.trim() !== "" ? "pointer" : "not-allowed",
+            cursor: "pointer",
             opacity: choice.text.trim() !== "" ? 1 : 0.5,
           }}
         >

@@ -69,3 +69,15 @@ export const deleteQuestion = async (questionId: string) => {
     throw error;
   }
 };
+
+export const fetchOneQuestion = async (questionId: any) => {
+  try {
+    const response = await axios.get(
+      `${REMOTE_SERVER}/api/questions/${questionId}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching quiz question:", error);
+    throw error;
+  }
+};
