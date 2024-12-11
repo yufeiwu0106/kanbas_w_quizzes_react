@@ -144,84 +144,94 @@ function Quizzes() {
 
       {/* Assignment QUIZZES*/}
       <ul id="wd-assignment-list" className="list-group rounded-0">
-        <li className="list-group-item p-1 mb-3 fs-5 border-grey">
-          <div className="wd-title p-3 ps-2 bg-secondary text-black">
-            <AiFillCaretDown /> ASSIGNMENT QUIZZES
-            <BiDotsVerticalRounded className="float-end mt-2" />
-            <AiOutlinePlus className="float-end mt-2" />
-            <button
-              type="button"
-              className="btn btn-outline-secondary text-black float-end me-1"
-            >
-              40% of Total
-            </button>
-          </div>
-          <ul className="list-group list-group-flush">
-            {quizzes.map(
-              (quiz: any) => (
-                // add a logging here
-                console.log("assignment", quiz.title),
-                (
-                  <li
-                    className="wd-assignment-list-item list-group-item p-3 ps-1"
-                    style={{ borderLeft: "5px solid green" }}
-                  >
-                    <div className="d-flex justify-content-between align-items-center">
-                      <div className="d-flex align-items-center">
-                        <RxRocket className="ms-2 me-4 fs-4 text-success" />
-                        <div>
-                          <a
-                            className="wd-quiz-link"
-                            href={`#/Kanbas/Courses/${cid}/Quizzes/${quiz._id}`}
-                            style={{
-                              color: "black",
-                              textDecoration: "none",
-                              fontWeight: "bold",
-                            }}
-                          >
-                            {quiz.title}
-                          </a>
-                          <br />
-                          <span className="text-black">
-                            <b>
-                              {getAvailabilityStatus(
-                                quiz.availableDate,
-                                quiz.dueDate
-                              )}
-                            </b>
-                            <b> | Due:</b> {formatDate(quiz.dueDate)}
-                            <b> | Points:</b> {quiz.point} pts
-                            {/* Number of questions*/}
-                            <b> | {quiz.questionCount} </b>Questions
-                            {/* Score if the current user is a student,*/}
-                            {currentUser.role === "STUDENT" && (
-                              <>
-                                <b> | Score:</b>
-                                {lastRecords[quiz._id] ? (
-                                  // If a record exists for the quiz, display the score
-                                  <span>{lastRecords[quiz._id]?.score}</span>
-                                ) : (
-                                  // If the record explicitly does not exist (null), show "No record found"
-                                  <span>No record found</span>
+        {currentUser.role === "FACULTY" && quizzes.length === 0 ? (
+          // Message and button when the quiz list is empty
+          <li
+            className="list-group-item text-center text-secondary p-4"
+            style={{ backgroundColor: "#f9f9f9" }}
+          >
+            You can click + Quiz to create quiz.
+          </li>
+        ) : (
+          <li className="list-group-item p-1 mb-3 fs-5 border-grey">
+            <div className="wd-title p-3 ps-2 bg-secondary text-black">
+              <AiFillCaretDown /> ASSIGNMENT QUIZZES
+              <BiDotsVerticalRounded className="float-end mt-2" />
+              <AiOutlinePlus className="float-end mt-2" />
+              <button
+                type="button"
+                className="btn btn-outline-secondary text-black float-end me-1"
+              >
+                40% of Total
+              </button>
+            </div>
+            <ul className="list-group list-group-flush">
+              {quizzes.map(
+                (quiz: any) => (
+                  // add a logging here
+                  console.log("assignment", quiz.title),
+                  (
+                    <li
+                      className="wd-assignment-list-item list-group-item p-3 ps-1"
+                      style={{ borderLeft: "5px solid green" }}
+                    >
+                      <div className="d-flex justify-content-between align-items-center">
+                        <div className="d-flex align-items-center">
+                          <RxRocket className="ms-2 me-4 fs-4 text-success" />
+                          <div>
+                            <a
+                              className="wd-quiz-link"
+                              href={`#/Kanbas/Courses/${cid}/Quizzes/${quiz._id}`}
+                              style={{
+                                color: "black",
+                                textDecoration: "none",
+                                fontWeight: "bold",
+                              }}
+                            >
+                              {quiz.title}
+                            </a>
+                            <br />
+                            <span className="text-black">
+                              <b>
+                                {getAvailabilityStatus(
+                                  quiz.availableDate,
+                                  quiz.dueDate
                                 )}
-                              </>
-                            )}
-                          </span>
+                              </b>
+                              <b> | Due:</b> {formatDate(quiz.dueDate)}
+                              <b> | Points:</b> {quiz.point} pts
+                              {/* Number of questions*/}
+                              <b> | {quiz.questionCount} </b>Questions
+                              {/* Score if the current user is a student,*/}
+                              {currentUser.role === "STUDENT" && (
+                                <>
+                                  <b> | Score:</b>
+                                  {lastRecords[quiz._id] ? (
+                                    // If a record exists for the quiz, display the score
+                                    <span>{lastRecords[quiz._id]?.score}</span>
+                                  ) : (
+                                    // If the record explicitly does not exist (null), show "No record found"
+                                    <span>No record found</span>
+                                  )}
+                                </>
+                              )}
+                            </span>
+                          </div>
+                        </div>
+                        <div style={{ position: "relative", right: "2rem" }}>
+                          <ContextMenu
+                            quizId={quiz._id}
+                            deleteQuiz={deleteQuiz}
+                          />
                         </div>
                       </div>
-                      <div style={{ position: "relative", right: "2rem" }}>
-                        <ContextMenu
-                          quizId={quiz._id}
-                          deleteQuiz={deleteQuiz}
-                        />
-                      </div>
-                    </div>
-                  </li>
+                    </li>
+                  )
                 )
-              )
-            )}
-          </ul>
-        </li>
+              )}
+            </ul>
+          </li>
+        )}
       </ul>
     </div>
   );

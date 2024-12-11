@@ -150,6 +150,13 @@ const QuizDetail = () => {
 
       <div className="row mb-2">
         <label className="col-sm-3 col-form-label">
+          <strong>Access Code</strong>
+        </label>
+        <div className="col-sm-9">{quiz?.accessCode || ""}</div>
+      </div>
+
+      <div className="row mb-2">
+        <label className="col-sm-3 col-form-label">
           <strong>One Question at a Time</strong>
         </label>
         <div className="col-sm-9">{quiz?.oneQuestionAtATime || "No"}</div>
