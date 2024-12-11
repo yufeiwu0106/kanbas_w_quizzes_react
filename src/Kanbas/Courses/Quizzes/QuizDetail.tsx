@@ -218,29 +218,35 @@ const QuizDetail = () => {
           </>
         ) : (
           <>
-            <ProtectedStartQuizRoute quiz={quiz}>
-              {/* Start Quiz Button for Students */}
-              <button
-                className="btn btn-success"
-                onClick={() =>
-                  navigate(`/Kanbas/Courses/${cid}/Quizzes/${quizId}/Take`)
-                }
-              >
-                Start Quiz
-              </button>
-            </ProtectedStartQuizRoute>
+            {quiz && (
+              <ProtectedStartQuizRoute quiz={quiz}>
+                {/* Start Quiz Button for Students */}
+                <button
+                  className="btn btn-success"
+                  onClick={() =>
+                    navigate(`/Kanbas/Courses/${cid}/Quizzes/${quizId}/Take`)
+                  }
+                >
+                  Start Quiz
+                </button>
+              </ProtectedStartQuizRoute>
+            )}
             {/* add some space between the buttons */}
             <div className="mt-2"></div>
 
             {/* Button to get last record */}
-            <button
-              className="btn btn-info"
-              onClick={() =>
-                navigate(`/Kanbas/Courses/${cid}/Quizzes/${quizId}/LastRecord`)
-              }
-            >
-              Get Last Record
-            </button>
+            {quiz && (
+              <button
+                className="btn btn-info"
+                onClick={() =>
+                  navigate(
+                    `/Kanbas/Courses/${cid}/Quizzes/${quizId}/LastRecord`
+                  )
+                }
+              >
+                Get Last Record
+              </button>
+            )}
           </>
         )}
       </div>

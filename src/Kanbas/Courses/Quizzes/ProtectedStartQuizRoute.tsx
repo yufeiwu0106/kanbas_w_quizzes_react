@@ -11,7 +11,6 @@ export default function ProtectedQuizRoute({
   children: any;
 }) {
   const { currentUser } = useSelector((state: any) => state.accountReducer);
-  const [loading, setLoading] = useState(true);
   const [canTakeQuiz, setCanTakeQuiz] = useState(false);
 
   useEffect(() => {
@@ -39,16 +38,11 @@ export default function ProtectedQuizRoute({
         console.error("Error checking quiz attempts:", error);
         setCanTakeQuiz(false);
       } finally {
-        setLoading(false);
       }
     };
 
     checkQuizAttempts();
   }, [quiz._id, currentUser._id, quiz.multipleAttempts, quiz.howManyAttempts]);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
 
   if (!canTakeQuiz) {
     return (
