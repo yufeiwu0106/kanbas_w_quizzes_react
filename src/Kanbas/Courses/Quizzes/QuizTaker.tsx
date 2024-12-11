@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { findQuestionsForQuiz } from "./client";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { submitQuiz } from "./client";
+import { useNavigate, useParams } from "react-router-dom";
+import { findQuestionsForQuiz, submitQuiz } from "./client";
 
 const QuizTaker = ({ onSubmit }: { onSubmit?: (score: number) => void }) => {
   const { cid, qid } = useParams();
@@ -36,11 +35,16 @@ const QuizTaker = ({ onSubmit }: { onSubmit?: (score: number) => void }) => {
       let isCorrect = false;
       let pointsEarned = 0;
 
-      if (
-        question.type === "True/False" ||
-        question.type === "Multiple Choice"
-      ) {
-        isCorrect = userAnswer === question.correctAnswer;
+      if (question.type === "True/False") {
+        isCorrect =
+          userAnswer?.toLowerCase() ===
+          question.correctAnswer?.toString().toLowerCase();
+        pointsEarned = isCorrect ? question.points : 0;
+      } else if (question.type === "Multiple Choice") {
+        const correctOption = question.options.find(
+          (opt: any) => opt.isCorrect
+        );
+        isCorrect = userAnswer === correctOption?.text;
         pointsEarned = isCorrect ? question.points : 0;
       } else if (question.type === "Fill in the Blank") {
         isCorrect = question.correctAnswers.includes(userAnswer);
