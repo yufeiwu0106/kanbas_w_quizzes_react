@@ -8,15 +8,26 @@ import * as client from "./client";
 
 export default function Signin() {
   const [credentials, setCredentials] = useState<any>({});
-  
+  const [error, setError] = useState<string | null>(null); 
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const signin = async () => {
-    const user = await client.signin(credentials);
-      if (!user) return;
-    dispatch(setCurrentUser(user));
-    navigate("/Kanbas/Dashboard");
+    setError(null); 
+    try {
+      const user = await client.signin(credentials);
+      if (!user) {
+        setError("Invalid username or password"); 
+        return;
+      }
+      dispatch(setCurrentUser(user));
+      navigate("/Kanbas/Dashboard");
+    } catch (err: any) {
+      console.error("Signin error:", err.response?.data || err.message);
+      setError("Invalid username or password");
+    }
   };
+
 
   const { currentUser } = useSelector((state: any) => state.accountReducer);
 
@@ -27,6 +38,7 @@ export default function Signin() {
   return (
     <div id="wd-signin-screen">
       <h3>Sign in</h3>
+      {error && <div className="alert alert-danger">{error}</div>} 
       <input
         defaultValue={credentials.username}
         onChange={(e) => setCredentials({ ...credentials, username: e.target.value })}
