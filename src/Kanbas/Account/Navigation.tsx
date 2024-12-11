@@ -11,6 +11,7 @@ export default function AccountNavigation() {
     <div id="wd-account-navigation" className="wd list-group fs-5 rounded-0">
       {links.map((link) => (
         <NavLink
+          key={link} 
           className={({ isActive }) =>
             `list-group-item border border-0 ${isActive ? "active" : ""}`
           }
