@@ -12,13 +12,16 @@ export default function Profile() {
   const { currentUser } = useSelector((state: any) => state.accountReducer);
 
   const updateProfile = async () => {
-    const updatedProfile = await client.updateUser(profile); // call backend
-    dispatch(setCurrentUser(updatedProfile)); // use redux to update the state
+    const updatedProfile = await client.updateUser(profile); 
+    dispatch(setCurrentUser(updatedProfile)); 
   };
 
   const fetchProfile = () => {
     if (!currentUser) return navigate("/Kanbas/Account/Signin");
-    setProfile(currentUser);
+    setProfile({
+      ...currentUser,
+      dob: currentUser.dob ? currentUser.dob.split("T")[0] : "",
+    });
   };
 
   const signout = async () => {
