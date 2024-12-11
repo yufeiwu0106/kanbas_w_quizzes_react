@@ -13,6 +13,7 @@ export default function Account() {
   return (
     <div id="wd-account-screen">
       <table>
+      <thead>
         <tr>
           <td valign="top">
             <AccountNavigation />
@@ -31,6 +32,7 @@ export default function Account() {
             </Routes>
           </td>
         </tr>
+        </thead>
       </table>
     </div>
   );
