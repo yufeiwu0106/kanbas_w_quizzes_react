@@ -90,13 +90,15 @@ const QuestionEditor = () => {
   };
 
   const handleCorrectAnswerChange = (choice: string) => {
-    setCurrQuestion({ ...currQuestion, correctAnswer: choice });
+    if (choice.trim() !== "") {
+      setCurrQuestion({ ...currQuestion, correctAnswer: choice });
 
-    const newChoices = choices.map((choiceObj) => ({
-      ...choiceObj,
-      isCorrect: choiceObj.text === choice ? true : false,
-    }));
-    setChoices(newChoices);
+      const newChoices = choices.map((choiceObj) => ({
+        ...choiceObj,
+        isCorrect: choiceObj.text === choice,
+      }));
+      setChoices(newChoices);
+    }
   };
 
   const handleAddChoice = () => {
