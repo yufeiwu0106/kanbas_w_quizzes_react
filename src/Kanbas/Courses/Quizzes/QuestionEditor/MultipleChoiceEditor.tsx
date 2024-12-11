@@ -1,6 +1,7 @@
 import React from "react";
 import { GrEdit } from "react-icons/gr";
 import { RiDeleteBin6Line } from "react-icons/ri";
+import { BsCheckCircleFill } from "react-icons/bs";
 import Editor from "react-simple-wysiwyg";
 
 interface Choice {
@@ -17,7 +18,7 @@ interface MultipleChoiceEditorProps {
     index: number,
     event: React.ChangeEvent<HTMLInputElement>
   ) => void;
-  handleCorrectAnswerChange: (choice: string) => void;
+  handleCorrectAnswerChange: (index: number) => void;
   handleAddChoice: () => void;
   handleDeleteChoice: (index: number) => void;
   selectedChoiceIndex: number | null;
@@ -57,46 +58,82 @@ const MultipleChoiceEditor: React.FC<MultipleChoiceEditorProps> = ({
     <br />
     {choices.map((choice, index) => (
       <div
-        className="choice d-flex align-items-center mb-2"
+        className={`choice d-flex align-items-center mb-2 p-2 rounded ${
+          choice.isCorrect ? "bg-light" : ""
+        }`}
         key={index}
         onClick={() => setSelectedChoiceIndex(index)}
-        style={{ cursor: "pointer" }}
+        style={{ cursor: "pointer", transition: "all 0.2s ease" }}
       >
-        <div className="me-2">
-          <input
-            type="radio"
-            id={`MC${index + 1}`}
-            name="correctAnswer"
-            checked={choice.isCorrect}
-            onChange={() => handleCorrectAnswerChange(choice.text)}
-            className="form-check-input"
-          />
-        </div>
-        <input
-          type="text"
-          id={`option${index + 1}`}
-          value={choice.text}
-          className="form-control flex-fill"
-          onChange={(e) => handleChoicesChange(index, e)}
-          placeholder={`Option ${index + 1}`}
-        />
-        {selectedChoiceIndex === index && (
-          <div className="d-flex ms-2">
-            <button className="btn p-0">
-              <GrEdit style={{ marginLeft: "4px" }} />
-            </button>
-            <button
-              className="btn p-0 ms-2"
-              onClick={() => handleDeleteChoice(index)}
-            >
-              <RiDeleteBin6Line style={{ marginLeft: "-4px" }} />
-            </button>
+        <div
+          className="me-2 d-flex align-items-center"
+          onClick={(e) => {
+            e.stopPropagation();
+            handleCorrectAnswerChange(index);
+          }}
+          style={{
+            cursor: "pointer",
+            opacity: choice.text.trim() !== "" ? 1 : 0.5,
+          }}
+        >
+          <div
+            className={`choice-radio ${choice.isCorrect ? "selected" : ""}`}
+            style={{
+              width: "20px",
+              height: "20px",
+              borderRadius: "50%",
+              border: choice.isCorrect ? "none" : "2px solid #dee2e6",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              transition: "all 0.2s ease",
+            }}
+          >
+            {choice.isCorrect && (
+              <BsCheckCircleFill
+                style={{
+                  color: "#198754",
+                  fontSize: "20px",
+                }}
+              />
+            )}
           </div>
-        )}
+        </div>
+        <div className="flex-grow-1 d-flex align-items-center">
+          <input
+            type="text"
+            id={`option${index + 1}`}
+            value={choice.text}
+            className="form-control"
+            onChange={(e) => handleChoicesChange(index, e)}
+            placeholder={`Option ${index + 1}`}
+            onClick={(e) => e.stopPropagation()}
+          />
+          {selectedChoiceIndex === index && (
+            <div className="d-flex ms-2">
+              <button
+                className="btn btn-light btn-sm me-1"
+                style={{ padding: "4px 8px" }}
+              >
+                <GrEdit size={14} />
+              </button>
+              <button
+                className="btn btn-danger btn-sm"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDeleteChoice(index);
+                }}
+                style={{ padding: "4px 8px" }}
+              >
+                <RiDeleteBin6Line size={14} />
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     ))}
     <button
-      className="btn btn-link p-0 float-end text-danger"
+      className="btn btn-outline-danger btn-sm mt-2 float-end"
       onClick={handleAddChoice}
     >
       + Add Another Answer

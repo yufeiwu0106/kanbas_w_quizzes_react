@@ -30,6 +30,7 @@ const QuestionEditor = () => {
     points: 10,
     answers: {},
     correctAnswer: "",
+    correctAnswers: [],
   });
 
   const [choices, setChoices] = useState<Choice[]>([
@@ -43,42 +44,50 @@ const QuestionEditor = () => {
   );
 
   useEffect(() => {
-    if (questionId) {
-      const questionToEdit = questions.find((q: any) => q._id === questionId);
-      if (questionToEdit) {
-        setCurrQuestion({
-          ...questionToEdit,
-          title: questionToEdit.title || "",
-          type: questionToEdit.type || "Multiple Choice",
-          question: questionToEdit.question || "",
-          description: questionToEdit.description || "",
-          points: questionToEdit.points || 10,
-          answers: questionToEdit.answers || {},
-          correctAnswer: questionToEdit.correctAnswer || "",
-        });
+    const fetchQuestion = async () => {
+      if (questionId) {
+        try {
+          const response = await client.fetchOneQuestion(questionId);
 
-        if (questionToEdit.type === "Multiple Choice") {
-          const choicesWithCorrect = (questionToEdit.options || []).map(
-            (option: any) => ({
-              text: option.text || "",
-              isCorrect: option.isCorrect || false,
-            })
-          );
+          // Update current question state
+          setCurrQuestion({
+            quizID: qid || "",
+            title: response.title,
+            type: response.type,
+            question: response.description,
+            points: response.points,
+            answers: response.answers || {},
+            correctAnswer: response.correctAnswer?.toString() || "",
+            correctAnswers: response.correctAnswers || [],
+          });
 
-          while (choicesWithCorrect.length < 4) {
-            choicesWithCorrect.push({ text: "", isCorrect: false });
+          // Handle different question types
+          if (response.type === "Multiple Choice" && response.options) {
+            setChoices(
+              response.options.map((option: any) => ({
+                text: option.text,
+                isCorrect: option.isCorrect,
+              }))
+            );
+          } else if (response.type === "True/False") {
+            setCurrQuestion((prev) => ({
+              ...prev,
+              answers: { "1": response.correctAnswer ? "True" : "False" },
+            }));
+          } else if (response.type === "Fill in the Blank") {
+            setCurrQuestion((prev) => ({
+              ...prev,
+              correctAnswers: response.correctAnswers || [],
+            }));
           }
-
-          setChoices(choicesWithCorrect);
-
-          const correctIndex = choicesWithCorrect.findIndex(
-            (c: Choice) => c.isCorrect
-          );
-          setSelectedChoiceIndex(correctIndex >= 0 ? correctIndex : null);
+        } catch (error) {
+          console.error("Error fetching question:", error);
         }
       }
-    }
-  }, [questionId, questions]);
+    };
+
+    fetchQuestion();
+  }, [questionId, qid]);
 
   const handleChoicesChange = (
     index: number,
@@ -89,14 +98,20 @@ const QuestionEditor = () => {
     setChoices(newChoices);
   };
 
-  const handleCorrectAnswerChange = (choice: string) => {
-    setCurrQuestion({ ...currQuestion, correctAnswer: choice });
-
-    const newChoices = choices.map((choiceObj) => ({
-      ...choiceObj,
-      isCorrect: choiceObj.text === choice ? true : false,
+  const handleCorrectAnswerChange = (index: number) => {
+    // Reset all choices to false first
+    const newChoices = choices.map((choice, i) => ({
+      ...choice,
+      isCorrect: i === index,
     }));
+
     setChoices(newChoices);
+
+    // Update the current question's correct answer
+    setCurrQuestion({
+      ...currQuestion,
+      correctAnswer: newChoices[index].text,
+    });
   };
 
   const handleAddChoice = () => {

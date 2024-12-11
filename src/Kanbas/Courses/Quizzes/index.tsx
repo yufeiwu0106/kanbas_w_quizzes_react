@@ -42,7 +42,7 @@ function Quizzes() {
         })
       );
       setQuizzesState(quizzesWithQuestionCount);
-      dispatch(setQuizzes(quizzesWithQuestionCount));
+      dispatch(setQuizzes(quizzesData));
 
       // If the user is a student, fetch the last record for each quiz
       if (currentUser.role === "STUDENT") {
@@ -171,7 +171,7 @@ function Quizzes() {
                         <RxRocket className="ms-2 me-4 fs-4 text-success" />
                         <div>
                           <a
-                            className="wd-assignment-link"
+                            className="wd-quiz-link"
                             href={`#/Kanbas/Courses/${cid}/Quizzes/${quiz._id}`}
                             style={{
                               color: "black",

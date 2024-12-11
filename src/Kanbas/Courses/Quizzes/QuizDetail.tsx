@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { findQuestionsForQuiz } from "./client";
 import * as quizClient from "./client";
 import Navigation from "./QuestionEditor/Navigation";
+import ProtectedStartQuizRoute from "./ProtectedStartQuizRoute";
 
 const QuizDetail = () => {
   const { cid, qid: quizId } = useParams();
@@ -12,11 +13,31 @@ const QuizDetail = () => {
   const navigate = useNavigate();
   const { currentUser } = useSelector((state: any) => state.accountReducer);
   const { quizzes } = useSelector((state: any) => state.quizzesReducer); // Get quizzes from Redux store
-
   const [questions, setQuestions] = useState([]);
-
-  const quiz = quizzes.find((q: any) => q._id === quizId) || null;
   const [isNewQuiz, setIsNewQuiz] = useState(false);
+  const [quiz, setQuiz] = useState<any>(null);
+
+  // Function to fetch quiz data
+  const fetchQuiz = async (quizId: string) => {
+    try {
+      const curQuiz = await quizClient.findQuizById(quizId); // API call to fetch quiz details
+      if (!curQuiz) {
+        setQuiz(null); // If no quiz is found, set to null
+      } else {
+        setQuiz(curQuiz); // Update state with fetched quiz
+      }
+    } catch (error) {
+      console.error("Error fetching quiz:", error); // Log the error for debugging
+      setQuiz(null); // Set to null in case of an error
+    }
+  };
+
+  // UseEffect to fetch the quiz whenever quizId or quizzes change
+  useEffect(() => {
+    if (quizId) {
+      fetchQuiz(quizId); // Ensure quizId is passed correctly
+    }
+  }, [quizId, quizzes]); // Ensure it runs when either quizId or quizzes change
 
   const formatDate = (date: string | undefined): string => {
     if (!date) return "Not specified";
@@ -53,8 +74,7 @@ const QuizDetail = () => {
 
   return (
     <div className="container mt-4">
-      <div id="wd-quiz-editor" className="mb-4">
-      </div>
+      <div id="wd-quiz-editor" className="mb-4"></div>
 
       <div className="row mb-2">
         <label className="col-sm-3 col-form-label">
@@ -198,27 +218,35 @@ const QuizDetail = () => {
           </>
         ) : (
           <>
-            {/* Start Quiz Button for Students */}
-            <button
-              className="btn btn-success"
-              onClick={() =>
-                navigate(`/Kanbas/Courses/${cid}/Quizzes/${quizId}/Take`)
-              }
-            >
-              Start Quiz
-            </button>
+            {quiz && (
+              <ProtectedStartQuizRoute quiz={quiz}>
+                {/* Start Quiz Button for Students */}
+                <button
+                  className="btn btn-success"
+                  onClick={() =>
+                    navigate(`/Kanbas/Courses/${cid}/Quizzes/${quizId}/Take`)
+                  }
+                >
+                  Start Quiz
+                </button>
+              </ProtectedStartQuizRoute>
+            )}
             {/* add some space between the buttons */}
             <div className="mt-2"></div>
 
             {/* Button to get last record */}
-            <button
-              className="btn btn-info"
-              onClick={() =>
-                navigate(`/Kanbas/Courses/${cid}/Quizzes/${quizId}/LastRecord`)
-              }
-            >
-              Get Last Record
-            </button>
+            {quiz && (
+              <button
+                className="btn btn-info"
+                onClick={() =>
+                  navigate(
+                    `/Kanbas/Courses/${cid}/Quizzes/${quizId}/LastRecord`
+                  )
+                }
+              >
+                Get Last Record
+              </button>
+            )}
           </>
         )}
       </div>
