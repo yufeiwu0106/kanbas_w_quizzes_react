@@ -213,6 +213,17 @@ const QuizDetail = () => {
               Edit Quiz
             </button>
 
+            {/* Button to get last record */}
+
+            <button
+              className="btn btn-info"
+              onClick={() =>
+                navigate(`/Kanbas/Courses/${cid}/Quizzes/${quizId}/LastRecord`)
+              }
+            >
+              Get Last Record 
+            </button>
+
             {/* Preview Quiz Button */}
             <button
               className="btn btn-secondary"
@@ -240,20 +251,6 @@ const QuizDetail = () => {
             )}
             {/* add some space between the buttons */}
             <div className="mt-2"></div>
-
-            {/* Button to get last record */}
-            {quiz && (
-              <button
-                className="btn btn-info"
-                onClick={() =>
-                  navigate(
-                    `/Kanbas/Courses/${cid}/Quizzes/${quizId}/LastRecord`
-                  )
-                }
-              >
-                Get Last Record
-              </button>
-            )}
           </>
         )}
       </div>
